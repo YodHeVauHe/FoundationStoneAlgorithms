@@ -1,0 +1,10 @@
+#root {
+  max-width: 100%;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: clamp(1rem, 5vw, 2rem);
+  text-align: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
