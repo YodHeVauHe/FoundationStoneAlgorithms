@@ -1,7 +1,7 @@
 import './App.css';
 import { Ripple } from './components/magicui/ripple';
 import { useTheme } from './hooks/useTheme';
-import { Moon, Sun, MessageSquare } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 import blackLogo from './assets/black.png';
 import whiteLogo from './assets/white.png';
 import { TypingAnimation } from './components/magicui/typing-animation';
