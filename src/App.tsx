@@ -18,7 +18,7 @@ function MainContent() {
     <div className="relative min-h-screen w-full overflow-hidden bg-background flex items-center justify-center p-4 sm:p-6 md:p-8">
       <Ripple className="fixed inset-0 z-0" mainCircleSize={250} mainCircleOpacity={0.35} numCircles={10} />
       <ShinyButton
-        onClick={() => navigate('/contact')}
+        onClick={() => navigate('contact')}
         className="fixed top-4 sm:top-6 md:top-8 right-4 sm:right-6 md:right-8 z-50 text-[10px] sm:text-xs px-3 py-1.5 bg-background/95 dark:bg-background/80 text-foreground font-medium hover:bg-background/90 dark:hover:bg-background/90 border border-border/50 dark:border-border/20"
       >
         Contact Us
