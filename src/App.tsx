@@ -7,7 +7,7 @@ import whiteLogo from './assets/white.png';
 import { TypingAnimation } from './components/magicui/typing-animation';
 import { motion } from 'motion/react';
 import { ShinyButton } from './components/magicui/shiny-button';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { ContactForm } from './components/ContactForm';
 
 function MainContent() {
