@@ -4,6 +4,9 @@ import { useTheme } from './hooks/useTheme';
 import { Moon, Sun } from 'lucide-react';
 import blackLogo from './assets/black.png';
 import whiteLogo from './assets/white.png';
+import agentChozek from './assets/Agent_Chozek.png';
+import agentEmuna from './assets/Agent_Emuna.png';
+import agentSophron from './assets/Agent_Sophron.png';
 import { TypingAnimation } from './components/magicui/typing-animation';
 import { motion } from 'motion/react';
 import { ShinyButton } from './components/magicui/shiny-button';
@@ -49,7 +52,7 @@ function App() {
               transition={{ type: "spring", duration: 1.2, delay: 3.0, bounce: 0.25 }}
             >
               <img
-                src="./assets/Agent_Chozek.png"
+                src={agentChozek}
                 alt="Agent Chozek"
                 className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 object-contain"
               />
@@ -63,7 +66,7 @@ function App() {
               transition={{ type: "spring", duration: 1.2, delay: 3.4, bounce: 0.25 }}
             >
               <img
-                src="./assets/Agent_Emuna.png"
+                src={agentEmuna}
                 alt="Agent Emuna"
                 className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 object-contain"
               />
@@ -77,7 +80,7 @@ function App() {
               transition={{ type: "spring", duration: 1.2, delay: 3.8, bounce: 0.25 }}
             >
               <img
-                src="./assets/Agent_Sophron.png"
+                src={agentSophron}
                 alt="Agent Sophron"
                 className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 object-contain"
               />
