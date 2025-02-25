@@ -49,7 +49,7 @@ function App() {
               transition={{ type: "spring", duration: 1.2, delay: 3.0, bounce: 0.25 }}
             >
               <img
-                src="/assets/Agent_Chozek.png"
+                src="./assets/Agent_Chozek.png"
                 alt="Agent Chozek"
                 className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 object-contain"
               />
@@ -63,7 +63,7 @@ function App() {
               transition={{ type: "spring", duration: 1.2, delay: 3.4, bounce: 0.25 }}
             >
               <img
-                src="/assets/Agent_Emuna.png"
+                src="./assets/Agent_Emuna.png"
                 alt="Agent Emuna"
                 className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 object-contain"
               />
@@ -77,7 +77,7 @@ function App() {
               transition={{ type: "spring", duration: 1.2, delay: 3.8, bounce: 0.25 }}
             >
               <img
-                src="/assets/Agent_Sophron.png"
+                src="./assets/Agent_Sophron.png"
                 alt="Agent Sophron"
                 className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 object-contain"
               />
