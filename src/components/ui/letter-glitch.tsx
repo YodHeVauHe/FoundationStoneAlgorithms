@@ -90,8 +90,8 @@ const LetterGlitch: React.FC<LetterGlitchProps> = ({
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            grid.current.columns = Math.ceil(canvas.width / charWidth);
-            grid.current.rows = Math.ceil(canvas.height / charHeight);
+            grid.current.columns = Math.ceil(canvas.width / charWidth) + 1;
+            grid.current.rows = Math.ceil(canvas.height / charHeight) + 1;
             letters.current = Array(grid.current.columns * grid.current.rows)
                 .fill(null)
                 .map(() => {
