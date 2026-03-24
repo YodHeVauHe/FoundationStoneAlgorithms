@@ -31,14 +31,35 @@
 :root {
   line-height: 1.5;
   font-weight: 400;
-  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-size: clamp(0.875rem, 1.2vw, 1rem);
 
-  color-scheme: light dark;
+  color-scheme: dark;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --background: 220 20% 7%;
+  --foreground: 210 20% 96%;
+  --card: 222 18% 10%;
+  --card-foreground: 210 20% 96%;
+  --popover: 222 18% 10%;
+  --popover-foreground: 210 20% 96%;
+  --primary: 197 82% 63%;
+  --primary-foreground: 222 47% 11%;
+  --secondary: 222 15% 15%;
+  --secondary-foreground: 210 20% 96%;
+  --muted: 223 14% 14%;
+  --muted-foreground: 215 12% 65%;
+  --accent: 223 14% 17%;
+  --accent-foreground: 210 20% 96%;
+  --destructive: 0 63% 43%;
+  --destructive-foreground: 210 20% 96%;
+  --border: 222 15% 19%;
+  --input: 222 15% 19%;
+  --ring: 197 82% 63%;
+  --radius: 0.75rem;
 }
 
 a {
@@ -62,19 +83,19 @@ body {
 }
 
 h1 {
-  font-size: clamp(2em, 5vw, 3.2em);
+  font-size: clamp(1.8em, 4vw, 2.8em);
   line-height: 1.1;
-  margin: clamp(0.5rem, 2vh, 1.5rem) 0;
+  margin: clamp(0.4rem, 1.5vh, 1rem) 0;
 }
 
 button {
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: clamp(0.4em, 2vw, 0.6em) clamp(0.8em, 3vw, 1.2em);
-  font-size: clamp(0.875em, 2.5vw, 1em);
+  padding: clamp(0.35em, 1.2vw, 0.55em) clamp(0.75em, 2vw, 1em);
+  font-size: clamp(0.8125em, 1.8vw, 0.95em);
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: transparent;
   cursor: pointer;
   transition: border-color 0.25s;
   max-width: 90vw;
@@ -89,65 +110,10 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-
-  a:hover {
-    color: #747bff;
-  }
-
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
 @layer base {
   :root {
-    --background: 0 0% 99%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 347 77% 70%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 346.8 77.2% 49.8%;
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 20 14.3% 4.1%;
-    --foreground: 0 0% 95%;
-    --card: 24 9.8% 10%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 9%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 347 77% 70%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 12 6.5% 15.1%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 85.7% 97.3%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 346.8 77.2% 49.8%;
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--background));
   }
 }
 
@@ -158,5 +124,9 @@ button:focus-visible {
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  html.dark {
+    color-scheme: dark;
   }
 }

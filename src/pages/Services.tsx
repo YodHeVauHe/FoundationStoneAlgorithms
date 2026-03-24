@@ -2,143 +2,157 @@ import { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import {
   ArrowLeft,
+  ArrowRight,
   Check,
-  Code2,
   Globe,
   Laptop,
-  Layers3,
   MessageSquareText,
-  MonitorSmartphone,
   PackageCheck,
   Smartphone,
 } from 'lucide-react';
+import { FaAndroid, FaApple, FaLinux, FaWindows } from 'react-icons/fa6';
 import { Link } from 'react-router-dom';
 import { ShinyButton } from '@/components/magicui/shiny-button';
 import { cn } from '@/lib/utils';
 
 type ProductId = 'mobile' | 'web' | 'system';
 type MobilePlatform = 'android' | 'ios' | 'both';
+type WebFocus = 'dashboard' | 'portal' | 'website';
 type SystemPlatform = 'linux' | 'macos' | 'windows';
+
+const steps = [
+  { id: 1, label: 'Service' },
+  { id: 2, label: 'Scope' },
+  { id: 3, label: 'Details' },
+  { id: 4, label: 'Review' },
+] as const;
 
 const productCards = [
   {
     id: 'mobile' as const,
     title: 'Mobile App',
-    description: 'Native applications for iOS and Android devices.',
+    description: 'Native or cross-platform experiences for phones and tablets.',
     icon: Smartphone,
   },
   {
     id: 'web' as const,
     title: 'Web Application',
-    description: 'Responsive, browser-based software solutions.',
+    description: 'Client portals, dashboards, and customer-facing browser products.',
     icon: Globe,
   },
   {
     id: 'system' as const,
     title: 'Desktop Software',
-    description: 'Powerful applications for Windows, macOS, and Linux.',
+    description: 'Focused software for operational teams on desktop environments.',
     icon: Laptop,
   },
 ];
 
 const mobileOptions = [
-  { id: 'android' as const, label: 'Android', icon: Smartphone },
-  { id: 'ios' as const, label: 'iOS', icon: MonitorSmartphone },
-  { id: 'both' as const, label: 'Both', icon: Layers3 },
+  { id: 'android' as const, label: 'Android', icon: FaAndroid },
+  { id: 'ios' as const, label: 'iOS', icon: FaApple },
+  { id: 'both' as const, label: 'Both', icon: Smartphone },
+];
+
+const webOptions = [
+  { id: 'dashboard' as const, label: 'Dashboard', description: 'Internal tools and analytics views.' },
+  { id: 'portal' as const, label: 'Client Portal', description: 'Accounts, onboarding, and user workflows.' },
+  { id: 'website' as const, label: 'Business Website', description: 'Marketing pages with lighter interactions.' },
 ];
 
 const systemOptions = [
-  { id: 'linux' as const, label: 'Linux', icon: Code2 },
-  { id: 'macos' as const, label: 'macOS', icon: Laptop },
-  { id: 'windows' as const, label: 'Windows', icon: MonitorSmartphone },
+  { id: 'linux' as const, label: 'Linux', icon: FaLinux },
+  { id: 'macos' as const, label: 'macOS', icon: FaApple },
+  { id: 'windows' as const, label: 'Windows', icon: FaWindows },
 ];
 
 export default function Services() {
-  const [selectedProducts, setSelectedProducts] = useState<ProductId[]>([]);
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
+  const [selectedProduct, setSelectedProduct] = useState<ProductId | null>(null);
   const [mobilePlatform, setMobilePlatform] = useState<MobilePlatform | null>(null);
+  const [webFocus, setWebFocus] = useState<WebFocus | null>(null);
   const [systemPlatforms, setSystemPlatforms] = useState<SystemPlatform[]>([]);
   const [description, setDescription] = useState('');
 
-  const toggleProduct = (product: ProductId) => {
-    setSelectedProducts((prev) => {
-      const next = prev.includes(product)
-        ? prev.filter((item) => item !== product)
-        : [...prev, product];
+  const selectedProductCard = productCards.find((card) => card.id === selectedProduct) ?? null;
 
-      if (!next.includes('mobile')) {
-        setMobilePlatform(null);
-      }
+  const stepTwoValid = useMemo(() => {
+    if (!selectedProduct) return false;
+    if (selectedProduct === 'mobile') return mobilePlatform !== null;
+    if (selectedProduct === 'web') return webFocus !== null;
+    return systemPlatforms.length > 0;
+  }, [mobilePlatform, selectedProduct, systemPlatforms, webFocus]);
 
-      if (!next.includes('system')) {
-        setSystemPlatforms([]);
-      }
-
-      return next;
-    });
-  };
-
-  const toggleSystemPlatform = (platform: SystemPlatform) => {
-    setSystemPlatforms((prev) =>
-      prev.includes(platform)
-        ? prev.filter((item) => item !== platform)
-        : [...prev, platform]
-    );
-  };
-
-  const canSubmit = useMemo(() => {
-    if (!selectedProducts.length || !description.trim()) {
-      return false;
-    }
-
-    if (selectedProducts.includes('mobile') && !mobilePlatform) {
-      return false;
-    }
-
-    if (selectedProducts.includes('system') && !systemPlatforms.length) {
-      return false;
-    }
-
-    return true;
-  }, [description, mobilePlatform, selectedProducts, systemPlatforms]);
+  const canMoveForward =
+    currentStep === 1
+      ? selectedProduct !== null
+      : currentStep === 2
+        ? stepTwoValid
+        : currentStep === 3
+          ? description.trim().length > 0
+          : true;
 
   const selectionSummary = useMemo(() => {
-    const lines: string[] = [];
+    if (!selectedProductCard) return [];
 
-    selectedProducts.forEach((product) => {
-      if (product === 'mobile') {
-        const mobileLabel =
-          mobileOptions.find((option) => option.id === mobilePlatform)?.label || 'Not selected';
-        lines.push(`Mobile app: ${mobileLabel}`);
-        return;
-      }
+    const lines = [`Service: ${selectedProductCard.title}`];
 
-      if (product === 'system') {
-        const labels = systemOptions
-          .filter((option) => systemPlatforms.includes(option.id))
-          .map((option) => option.label)
-          .join(', ');
-        lines.push(`Desktop app: ${labels || 'Not selected'}`);
-        return;
-      }
+    if (selectedProduct === 'mobile') {
+      const mobileLabel =
+        mobileOptions.find((option) => option.id === mobilePlatform)?.label ?? 'Not selected';
+      lines.push(`Platform: ${mobileLabel}`);
+    }
 
-      lines.push('Web app: Selected');
-    });
+    if (selectedProduct === 'web') {
+      const webLabel = webOptions.find((option) => option.id === webFocus)?.label ?? 'Not selected';
+      lines.push(`Focus: ${webLabel}`);
+    }
+
+    if (selectedProduct === 'system') {
+      const labels = systemOptions
+        .filter((option) => systemPlatforms.includes(option.id))
+        .map((option) => option.label)
+        .join(', ');
+      lines.push(`Target OS: ${labels || 'Not selected'}`);
+    }
 
     return lines;
-  }, [mobilePlatform, selectedProducts, systemPlatforms]);
+  }, [mobilePlatform, selectedProduct, selectedProductCard, systemPlatforms, webFocus]);
 
   const getQuote = () => {
     const summary = [...selectionSummary, `Project details: ${description.trim()}`].join('\n');
     alert(`Quote Request Summary\n\n${summary}`);
   };
 
-  return (
-    <div className="relative min-h-screen w-full bg-background font-sans text-foreground selection:bg-primary/10 selection:text-primary">
-      {/* Background Gradient */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.02)_100%)] dark:bg-[linear-gradient(to_bottom,transparent_0%,rgba(255,255,255,0.02)_100%)] pointer-events-none" />
+  const chooseProduct = (product: ProductId) => {
+    setSelectedProduct(product);
+    setMobilePlatform(null);
+    setWebFocus(null);
+    setSystemPlatforms([]);
+  };
 
-      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-8 sm:px-6 lg:px-8">
-        {/* Header */}
+  const toggleSystemPlatform = (platform: SystemPlatform) => {
+    setSystemPlatforms((prev) =>
+      prev.includes(platform) ? prev.filter((item) => item !== platform) : [...prev, platform]
+    );
+  };
+
+  const goNext = () => {
+    if (!canMoveForward || currentStep === 4) return;
+    setCurrentStep((prev) => (prev + 1) as 1 | 2 | 3 | 4);
+  };
+
+  const goBack = () => {
+    if (currentStep === 1) return;
+    setCurrentStep((prev) => (prev - 1) as 1 | 2 | 3 | 4);
+  };
+
+  return (
+    <div className="relative min-h-screen w-full overflow-hidden bg-background text-foreground selection:bg-primary/20 selection:text-foreground">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.18),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.03),transparent_24%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.08),transparent_60%)]" />
+
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <div className="mb-8 flex items-center justify-between">
           <Link
             to="/"
@@ -147,90 +161,151 @@ export default function Services() {
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back to Home
           </Link>
-          <div className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[10px] uppercase tracking-widest text-primary font-medium">
-            Quote Builder
+          <div className="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.24em] text-primary">
+            Services Wizard
           </div>
         </div>
 
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className="grid flex-1 gap-8 lg:grid-cols-[1fr_360px]"
-        >
-          {/* Main Content */}
-          <section className="space-y-8">
-            <div className="space-y-4">
-              <p className="font-serif text-lg italic text-primary">Build Scope</p>
-              <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-                Choose the products<br />you want quoted.
-              </h1>
-              <p className="max-w-xl font-serif text-xl italic text-muted-foreground">
-                Select one or more products to create a custom engagement.
-              </p>
+        <div className="grid flex-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <section className="rounded-[28px] border border-border/80 bg-card/88 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.32)] sm:p-7">
+            <div className="mb-8 space-y-4">
+              <div className="space-y-2">
+                <p className="text-xs font-medium uppercase tracking-[0.28em] text-primary/80">Get a Quote</p>
+                <h1 className="max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
+                  Tell us what needs to be built.
+                </h1>
+                <p className="max-w-2xl text-base leading-7 text-muted-foreground">
+                  This flow keeps the request focused. Choose one service, define the scope, describe
+                  the work, then review the request before sending it.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-border/80 bg-background/70 p-4">
+                <div className="mb-3 flex items-center justify-between text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                  <span>Progress</span>
+                  <span>Step {currentStep} of {steps.length}</span>
+                </div>
+                <div className="mb-4 h-2 rounded-full bg-muted">
+                  <div
+                    className="h-2 rounded-full bg-primary transition-all duration-300"
+                    style={{ width: `${(currentStep / steps.length) * 100}%` }}
+                  />
+                </div>
+                <div className="grid gap-3 sm:grid-cols-4">
+                  {steps.map((step) => {
+                    const isActive = step.id === currentStep;
+                    const isComplete = step.id < currentStep;
+
+                    return (
+                      <div
+                        key={step.id}
+                        className={cn(
+                          'rounded-xl border px-3 py-3 text-left transition-colors',
+                          isActive
+                            ? 'border-primary/60 bg-primary/10'
+                            : isComplete
+                              ? 'border-primary/20 bg-primary/5'
+                              : 'border-border bg-card'
+                        )}
+                      >
+                        <div className="mb-2 flex items-center gap-2">
+                          <div
+                            className={cn(
+                              'flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold',
+                              isActive || isComplete
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-muted text-muted-foreground'
+                            )}
+                          >
+                            {isComplete ? <Check className="h-3.5 w-3.5" /> : step.id}
+                          </div>
+                          <span className="text-sm font-medium text-foreground">{step.label}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-3">
-              {productCards.map((card) => {
-                const Icon = card.icon;
-                const isSelected = selectedProducts.includes(card.id);
-
-                return (
-                  <button
-                    key={card.id}
-                    type="button"
-                    onClick={() => toggleProduct(card.id)}
-                    className={cn(
-                      "group relative flex flex-col rounded-xl border p-6 text-left transition-all duration-200",
-                      isSelected
-                        ? "border-primary bg-primary/5 shadow-[0_0_0_1px_rgba(var(--primary),1)]"
-                        : "border-border bg-card hover:border-primary/50 hover:shadow-md"
-                    )}
-                  >
-                    <div className="mb-4 flex items-start justify-between">
-                      <div className={cn(
-                        "flex h-12 w-12 items-center justify-center rounded-lg transition-colors",
-                        isSelected ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
-                      )}>
-                        <Icon className="h-6 w-6" />
-                      </div>
-                      <div className={cn(
-                        "flex h-6 w-6 items-center justify-center rounded-full border transition-all",
-                        isSelected
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-muted-foreground/20 text-transparent"
-                      )}>
-                        <Check className="h-3.5 w-3.5" />
-                      </div>
-                    </div>
-                    <h3 className="mb-2 font-semibold tracking-tight">{card.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{card.description}</p>
-                    
-                    {/* Bottom active border */}
-                    {isSelected && (
-                      <div className="absolute bottom-0 left-0 h-1 w-full rounded-b-xl bg-primary" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Sub-options Area */}
-            <div className="space-y-6">
-              {selectedProducts.includes('mobile') && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  className="rounded-xl border border-border bg-card/50 p-6"
-                >
-                  <div className="mb-4 flex items-center gap-3">
-                    <Smartphone className="h-5 w-5 text-primary" />
-                    <div>
-                      <h3 className="font-semibold">Mobile Platform</h3>
-                      <p className="text-sm text-muted-foreground">Target audience devices.</p>
-                    </div>
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+              className="space-y-6"
+            >
+              {currentStep === 1 && (
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <h2 className="text-2xl font-semibold tracking-tight">Choose one service</h2>
+                    <p className="text-sm leading-6 text-muted-foreground">
+                      Start with the primary product you want quoted. You can keep the request focused
+                      and specific.
+                    </p>
                   </div>
-                  <div className="flex flex-wrap gap-3">
+
+                  <div className="grid gap-4 md:grid-cols-3">
+                    {productCards.map((card) => {
+                      const Icon = card.icon;
+                      const isSelected = selectedProduct === card.id;
+
+                      return (
+                        <button
+                          key={card.id}
+                          type="button"
+                          onClick={() => chooseProduct(card.id)}
+                          className={cn(
+                            'relative flex min-h-[220px] flex-col rounded-2xl border p-5 text-left transition-all duration-200',
+                            isSelected
+                              ? 'border-primary/60 bg-primary/10 shadow-[0_18px_40px_rgba(14,165,233,0.12)]'
+                              : 'border-border bg-background/70 hover:border-primary/35 hover:bg-background'
+                          )}
+                        >
+                          <div className="mb-6 flex items-start justify-between">
+                            <div
+                              className={cn(
+                                'flex h-12 w-12 items-center justify-center rounded-xl border',
+                                isSelected
+                                  ? 'border-primary/30 bg-primary text-primary-foreground'
+                                  : 'border-border bg-card text-primary'
+                              )}
+                            >
+                              <Icon className="h-5 w-5" />
+                            </div>
+                            <div
+                              className={cn(
+                                'flex h-7 w-7 items-center justify-center rounded-full border',
+                                isSelected
+                                  ? 'border-primary bg-primary text-primary-foreground'
+                                  : 'border-border text-transparent'
+                              )}
+                            >
+                              <Check className="h-4 w-4" />
+                            </div>
+                          </div>
+                          <h3 className="mb-2 text-lg font-semibold">{card.title}</h3>
+                          <p className="text-sm leading-6 text-muted-foreground">{card.description}</p>
+                          <div className="mt-auto pt-6 text-xs uppercase tracking-[0.22em] text-primary/75">
+                            Select service
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 2 && selectedProduct === 'mobile' && (
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <h2 className="text-2xl font-semibold tracking-tight">Choose a mobile platform</h2>
+                    <p className="text-sm leading-6 text-muted-foreground">
+                      Pick the device target for the app quote.
+                    </p>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-3">
                     {mobileOptions.map((option) => {
                       const Icon = option.icon;
                       const isSelected = mobilePlatform === option.id;
@@ -241,35 +316,93 @@ export default function Services() {
                           type="button"
                           onClick={() => setMobilePlatform(option.id)}
                           className={cn(
-                            "flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all",
+                            'flex min-h-[160px] flex-col rounded-2xl border p-5 text-left transition-all',
                             isSelected
-                              ? "border-primary bg-primary/10 text-primary"
-                              : "border-border bg-background hover:border-primary/50"
+                              ? 'border-primary/60 bg-primary/10'
+                              : 'border-border bg-background/70 hover:border-primary/35'
                           )}
                         >
-                          <Icon className="h-4 w-4" />
-                          {option.label}
+                          <div
+                            className={cn(
+                              'mb-5 flex h-11 w-11 items-center justify-center rounded-xl border',
+                              isSelected
+                                ? 'border-primary/30 bg-primary text-primary-foreground'
+                                : 'border-border bg-card text-primary'
+                            )}
+                          >
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <h3 className="text-lg font-semibold">{option.label}</h3>
+                          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                            {option.id === 'both'
+                              ? 'Reach both ecosystems with one scoped quote.'
+                              : `Target ${option.label} users first.`}
+                          </p>
                         </button>
                       );
                     })}
                   </div>
-                </motion.div>
+                </div>
               )}
 
-              {selectedProducts.includes('system') && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  className="rounded-xl border border-border bg-card/50 p-6"
-                >
-                  <div className="mb-4 flex items-center gap-3">
-                    <Laptop className="h-5 w-5 text-primary" />
-                    <div>
-                      <h3 className="font-semibold">Desktop Platforms</h3>
-                      <p className="text-sm text-muted-foreground">Supported operating systems.</p>
-                    </div>
+              {currentStep === 2 && selectedProduct === 'web' && (
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <h2 className="text-2xl font-semibold tracking-tight">Define the web product</h2>
+                    <p className="text-sm leading-6 text-muted-foreground">
+                      Choose the closest shape for the browser experience you want built.
+                    </p>
                   </div>
-                  <div className="flex flex-wrap gap-3">
+
+                  <div className="space-y-3">
+                    {webOptions.map((option) => {
+                      const isSelected = webFocus === option.id;
+
+                      return (
+                        <button
+                          key={option.id}
+                          type="button"
+                          onClick={() => setWebFocus(option.id)}
+                          className={cn(
+                            'flex w-full items-start justify-between rounded-2xl border p-5 text-left transition-all',
+                            isSelected
+                              ? 'border-primary/60 bg-primary/10'
+                              : 'border-border bg-background/70 hover:border-primary/35'
+                          )}
+                        >
+                          <div className="pr-4">
+                            <h3 className="text-lg font-semibold">{option.label}</h3>
+                            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                              {option.description}
+                            </p>
+                          </div>
+                          <div
+                            className={cn(
+                              'mt-1 flex h-7 w-7 items-center justify-center rounded-full border',
+                              isSelected
+                                ? 'border-primary bg-primary text-primary-foreground'
+                                : 'border-border text-transparent'
+                            )}
+                          >
+                            <Check className="h-4 w-4" />
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 2 && selectedProduct === 'system' && (
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <h2 className="text-2xl font-semibold tracking-tight">Choose desktop targets</h2>
+                    <p className="text-sm leading-6 text-muted-foreground">
+                      Select one or more operating systems for the software quote.
+                    </p>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-3">
                     {systemOptions.map((option) => {
                       const Icon = option.icon;
                       const isSelected = systemPlatforms.includes(option.id);
@@ -280,88 +413,217 @@ export default function Services() {
                           type="button"
                           onClick={() => toggleSystemPlatform(option.id)}
                           className={cn(
-                            "flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all",
+                            'flex min-h-[160px] flex-col rounded-2xl border p-5 text-left transition-all',
                             isSelected
-                              ? "border-primary bg-primary/10 text-primary"
-                              : "border-border bg-background hover:border-primary/50"
+                              ? 'border-primary/60 bg-primary/10'
+                              : 'border-border bg-background/70 hover:border-primary/35'
                           )}
                         >
-                          <Icon className="h-4 w-4" />
-                          {option.label}
+                          <div className="mb-5 flex items-start justify-between">
+                            <div
+                              className={cn(
+                                'flex h-11 w-11 items-center justify-center rounded-xl border',
+                                isSelected
+                                  ? 'border-primary/30 bg-primary text-primary-foreground'
+                                  : 'border-border bg-card text-primary'
+                              )}
+                            >
+                              <Icon className="h-5 w-5" />
+                            </div>
+                            <div
+                              className={cn(
+                                'flex h-7 w-7 items-center justify-center rounded-full border',
+                                isSelected
+                                  ? 'border-primary bg-primary text-primary-foreground'
+                                  : 'border-border text-transparent'
+                              )}
+                            >
+                              <Check className="h-4 w-4" />
+                            </div>
+                          </div>
+                          <h3 className="text-lg font-semibold">{option.label}</h3>
+                          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                            Include {option.label} in the delivery scope.
+                          </p>
                         </button>
                       );
                     })}
                   </div>
-                </motion.div>
+                </div>
               )}
 
-              <div className="rounded-xl border border-border bg-card p-6">
-                <div className="mb-4 flex items-center gap-3">
-                  <MessageSquareText className="h-5 w-5 text-primary" />
-                  <div>
-                    <h3 className="font-semibold">Project Details</h3>
-                    <p className="text-sm text-muted-foreground">Briefly describe your requirements.</p>
+              {currentStep === 3 && (
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <h2 className="text-2xl font-semibold tracking-tight">Describe the project</h2>
+                    <p className="text-sm leading-6 text-muted-foreground">
+                      Share the core problem, intended users, and the most important outcomes.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-border bg-background/70 p-5">
+                    <div className="grid gap-4 sm:grid-cols-[56px_minmax(0,1fr)] sm:items-start">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-card text-primary">
+                        <MessageSquareText className="h-5 w-5" />
+                      </div>
+
+                      <div className="min-w-0 space-y-3 text-left">
+                        <div className="space-y-1">
+                          <h3 className="text-lg font-semibold">Project brief</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Example: customer onboarding app, internal dashboard, or field operations desktop tool.
+                          </p>
+                        </div>
+
+                        <textarea
+                          value={description}
+                          onChange={(event) => setDescription(event.target.value)}
+                          placeholder="Describe what should be built, who will use it, and any must-have workflows."
+                          className="min-h-[220px] w-full resize-none rounded-2xl border border-border bg-card px-4 py-4 text-sm leading-7 outline-none transition-all placeholder:text-muted-foreground/55 focus:border-primary focus:ring-2 focus:ring-primary/10"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <textarea
-                  value={description}
-                  onChange={(event) => setDescription(event.target.value)}
-                  placeholder="e.g., I need a customer-facing mobile app..."
-                  className="min-h-[120px] w-full resize-none rounded-lg border border-border bg-background px-4 py-3 text-sm outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/10"
-                />
+              )}
+
+              {currentStep === 4 && (
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <h2 className="text-2xl font-semibold tracking-tight">Review your request</h2>
+                    <p className="text-sm leading-6 text-muted-foreground">
+                      Check the service scope before sending the quote request.
+                    </p>
+                  </div>
+
+                  <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
+                    <div className="rounded-2xl border border-border bg-background/70 p-5">
+                      <div className="mb-4 flex items-center gap-3">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card text-primary">
+                          {selectedProduct === 'mobile' && <Smartphone className="h-5 w-5" />}
+                          {selectedProduct === 'web' && <Globe className="h-5 w-5" />}
+                          {selectedProduct === 'system' && <Laptop className="h-5 w-5" />}
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold">{selectedProductCard?.title}</h3>
+                          <p className="text-sm text-muted-foreground">Selected service</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        {selectionSummary.map((item) => (
+                          <div
+                            key={item}
+                            className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground/85"
+                          >
+                            <Check className="h-4 w-4 text-primary" />
+                            {item}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-border bg-background/70 p-5">
+                      <div className="mb-4 flex items-center gap-3">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card text-primary">
+                          <PackageCheck className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold">Project details</h3>
+                          <p className="text-sm text-muted-foreground">Request summary</p>
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl border border-border bg-card p-4 text-sm leading-7 text-foreground/85">
+                        {description.trim()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+
+            <div className="mt-8 flex flex-col gap-3 border-t border-border/80 pt-5 sm:flex-row sm:items-center sm:justify-between">
+              <button
+                type="button"
+                onClick={goBack}
+                disabled={currentStep === 1}
+                className={cn(
+                  'inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-colors',
+                  currentStep === 1 && 'cursor-not-allowed opacity-45'
+                )}
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </button>
+
+              <div className="flex items-center gap-3">
+                {currentStep < 4 ? (
+                  <ShinyButton
+                    onClick={goNext}
+                    disabled={!canMoveForward}
+                    className={cn(
+                      'px-5 py-3 text-sm',
+                      !canMoveForward && 'cursor-not-allowed opacity-45 hover:shadow-none'
+                    )}
+                  >
+                    Continue
+                    <ArrowRight className="h-4 w-4" />
+                  </ShinyButton>
+                ) : (
+                  <ShinyButton onClick={getQuote} className="px-5 py-3 text-sm">
+                    Request Quote
+                    <ArrowRight className="h-4 w-4" />
+                  </ShinyButton>
+                )}
               </div>
             </div>
           </section>
 
-          {/* Sidebar */}
-          <aside className="h-fit space-y-6 rounded-2xl border border-border bg-card p-6 shadow-sm lg:sticky lg:top-8">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <PackageCheck className="h-5 w-5" />
-              </div>
-              <div>
-                <h2 className="font-serif italic text-lg text-foreground">Selected Scope</h2>
-                <p className="text-xs text-muted-foreground">Live summary.</p>
-              </div>
+          <aside className="h-fit space-y-4 rounded-[28px] border border-border/80 bg-card/88 p-5 lg:sticky lg:top-8">
+            <div className="space-y-2">
+              <p className="text-xs font-medium uppercase tracking-[0.24em] text-primary/80">Current Step</p>
+              <h2 className="text-2xl font-semibold tracking-tight">{steps[currentStep - 1].label}</h2>
+              <p className="text-sm leading-6 text-muted-foreground">
+                A guided quote request with one service per submission.
+              </p>
             </div>
 
-            <div className="space-y-3">
-              {selectedProducts.length ? (
-                selectionSummary.map((item) => (
-                  <div key={item} className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground/80">
-                    <Check className="h-3.5 w-3.5 text-primary" />
-                    {item}
+            <div className="rounded-2xl border border-border bg-background/70 p-4">
+              <p className="mb-3 text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
+                What you have so far
+              </p>
+              <div className="space-y-2.5">
+                {selectionSummary.length ? (
+                  selectionSummary.map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground/85"
+                    >
+                      <Check className="h-4 w-4 text-primary" />
+                      {item}
+                    </div>
+                  ))
+                ) : (
+                  <div className="rounded-xl border border-dashed border-border px-3 py-5 text-sm text-muted-foreground">
+                    No selection yet.
                   </div>
-                ))
-              ) : (
-                <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-8 text-center">
-                  <p className="text-sm text-muted-foreground">No products selected.</p>
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
-            <div className="rounded-xl bg-primary/5 p-4">
-              <p className="mb-2 text-[10px] uppercase tracking-widest text-primary/70 font-semibold">Included Logic</p>
-              <ul className="list-disc pl-4 space-y-1 text-xs text-muted-foreground">
-                <li>Mobile requires OS selection.</li>
-                <li>Desktop allows multiple targets.</li>
+            <div className="rounded-2xl border border-border bg-background/70 p-4">
+              <p className="mb-3 text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
+                Step guidance
+              </p>
+              <ul className="space-y-2 text-sm leading-6 text-muted-foreground">
+                <li>Choose one service to keep the quote focused.</li>
+                <li>Step two adapts to the selected service type.</li>
+                <li>Write the key requirements before submitting.</li>
               </ul>
             </div>
-
-            <div className="pt-2">
-              <ShinyButton
-                onClick={getQuote}
-                disabled={!canSubmit}
-                className={cn(
-                  "w-full justify-center text-sm font-medium",
-                  !canSubmit && "opacity-50 cursor-not-allowed hover:shadow-none"
-                )}
-              >
-                Request Quote
-              </ShinyButton>
-            </div>
           </aside>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
