@@ -3,8 +3,11 @@ import { Ripple } from './components/magicui/ripple';
 import whiteLogo from './assets/white.png';
 import { TypingAnimation } from './components/magicui/typing-animation';
 import { motion } from 'motion/react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import LetterGlitch from './components/ui/letter-glitch';
+import { ShinyButton } from './components/magicui/shiny-button';
+import { ArrowRight } from 'lucide-react';
+import Services from './pages/Services';
 
 function MainContent() {
   return (
@@ -43,6 +46,18 @@ function MainContent() {
             </TypingAnimation>
             <cite className="block text-sm mt-2 italic">- Be'Zaleel</cite>
           </div>
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 2 }}
+            className="mt-6"
+          >
+            <Link to="/services">
+              <ShinyButton className="px-4 py-2 text-sm sm:px-5 sm:py-2.5">
+                Get a Quote <ArrowRight className="w-4 h-4 ml-1" />
+              </ShinyButton>
+            </Link>
+          </motion.div>
         </div>
       </div>
 
@@ -58,6 +73,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<MainContent />} />
+        <Route path="/services" element={<Services />} />
       </Routes>
     </Router>
   );
