@@ -29,14 +29,11 @@
 }
 
 :root {
-  font-family: "Space Mono", serif;
   line-height: 1.5;
   font-weight: 400;
   font-size: clamp(1rem, 2.5vw, 1.25rem);
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #1a1a1a;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -109,7 +106,7 @@ button:focus-visible {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 0 0% 99%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
