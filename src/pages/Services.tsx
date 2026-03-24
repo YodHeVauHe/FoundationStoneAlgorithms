@@ -13,9 +13,8 @@ import {
   Smartphone,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Ripple } from '@/components/magicui/ripple';
-import LetterGlitch from '@/components/ui/letter-glitch';
 import { ShinyButton } from '@/components/magicui/shiny-button';
+import { cn } from '@/lib/utils';
 
 type ProductId = 'mobile' | 'web' | 'system';
 type MobilePlatform = 'android' | 'ios' | 'both';
@@ -24,20 +23,20 @@ type SystemPlatform = 'linux' | 'macos' | 'windows';
 const productCards = [
   {
     id: 'mobile' as const,
-    title: 'Mobile app',
-    description: 'Apps for phones and tablets with Android, iOS, or both.',
+    title: 'Mobile App',
+    description: 'Native applications for iOS and Android devices.',
     icon: Smartphone,
   },
   {
     id: 'web' as const,
-    title: 'Web app',
-    description: 'Browser-based products with no extra platform choice needed.',
+    title: 'Web Application',
+    description: 'Responsive, browser-based software solutions.',
     icon: Globe,
   },
   {
     id: 'system' as const,
-    title: 'Operating system app',
-    description: 'Desktop software for Linux, macOS, or Windows.',
+    title: 'Desktop Software',
+    description: 'Powerful applications for Windows, macOS, and Linux.',
     icon: Laptop,
   },
 ];
@@ -53,12 +52,6 @@ const systemOptions = [
   { id: 'macos' as const, label: 'macOS', icon: Laptop },
   { id: 'windows' as const, label: 'Windows', icon: MonitorSmartphone },
 ];
-
-const productLabels: Record<ProductId, string> = {
-  mobile: 'Mobile app',
-  web: 'Web app',
-  system: 'Operating system app',
-};
 
 export default function Services() {
   const [selectedProducts, setSelectedProducts] = useState<ProductId[]>([]);
@@ -124,7 +117,7 @@ export default function Services() {
           .filter((option) => systemPlatforms.includes(option.id))
           .map((option) => option.label)
           .join(', ');
-        lines.push(`Operating system app: ${labels || 'Not selected'}`);
+        lines.push(`Desktop app: ${labels || 'Not selected'}`);
         return;
       }
 
@@ -140,29 +133,21 @@ export default function Services() {
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-background">
-      <div className="fixed inset-0 z-0">
-        <LetterGlitch
-          glitchColors={['#0ea5e9', '#06b6d4', '#3b82f6', '#0c4a6e', '#164e63']}
-          glitchSpeed={20}
-          centerVignette={true}
-          outerVignette={true}
-          smooth={true}
-          theme="dark"
-        />
-      </div>
-      <Ripple className="fixed inset-0 z-0" mainCircleSize={250} mainCircleOpacity={0.35} numCircles={10} />
+    <div className="relative min-h-screen w-full bg-background font-sans text-foreground selection:bg-primary/10 selection:text-primary">
+      {/* Background Gradient */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.02)_100%)] dark:bg-[linear-gradient(to_bottom,transparent_0%,rgba(255,255,255,0.02)_100%)] pointer-events-none" />
 
-      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-5xl flex-col px-3 py-4 sm:px-5 lg:px-6">
-        <div className="mb-4 flex items-center justify-between gap-3">
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-8 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8 flex items-center justify-between">
           <Link
             to="/"
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/25 px-2.5 py-1.5 text-xs text-white/80 transition hover:border-primary/60 hover:text-white"
+            className="group inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Back
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            Back to Home
           </Link>
-          <div className="rounded-full border border-white/10 bg-black/25 px-2.5 py-1.5 text-[10px] uppercase tracking-[0.2em] text-white/50">
+          <div className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[10px] uppercase tracking-widest text-primary font-medium">
             Quote Builder
           </div>
         </div>
@@ -170,20 +155,22 @@ export default function Services() {
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="grid flex-1 gap-4 lg:grid-cols-[1.28fr_0.72fr]"
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="grid flex-1 gap-8 lg:grid-cols-[1fr_360px]"
         >
-          <section className="rounded-[1.5rem] border border-white/10 bg-black/45 p-4 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-5">
-            <div className="mb-6 max-w-xl">
-              <p className="mb-2 text-[10px] uppercase tracking-[0.28em] text-cyan-300/70">Build Scope</p>
-              <h1 className="mb-2 text-2xl font-semibold text-white sm:text-3xl">
-                Choose the products you want quoted.
+          {/* Main Content */}
+          <section className="space-y-8">
+            <div className="space-y-4">
+              <p className="font-serif text-lg italic text-primary">Build Scope</p>
+              <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+                Choose the products<br />you want quoted.
               </h1>
-              <p className="text-xs leading-5 text-white/70 sm:text-sm">
-                Pick one product, multiple products, or all of them. Extra options only appear when they are relevant.
+              <p className="max-w-xl font-serif text-xl italic text-muted-foreground">
+                Select one or more products to create a custom engagement.
               </p>
             </div>
 
-            <div className="grid gap-3 md:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-3">
               {productCards.map((card) => {
                 const Icon = card.icon;
                 const isSelected = selectedProducts.includes(card.id);
@@ -193,46 +180,57 @@ export default function Services() {
                     key={card.id}
                     type="button"
                     onClick={() => toggleProduct(card.id)}
-                    className={`group relative rounded-[1.2rem] border p-4 text-left transition duration-200 ${
+                    className={cn(
+                      "group relative flex flex-col rounded-xl border p-6 text-left transition-all duration-200",
                       isSelected
-                        ? 'border-primary bg-primary/15 shadow-lg shadow-primary/10'
-                        : 'border-white/10 bg-white/5 hover:border-cyan-300/50 hover:bg-white/10'
-                    }`}
+                        ? "border-primary bg-primary/5 shadow-[0_0_0_1px_rgba(var(--primary),1)]"
+                        : "border-border bg-card hover:border-primary/50 hover:shadow-md"
+                    )}
                   >
-                    <div className="mb-3 flex items-start justify-between gap-3">
-                      <div
-                        className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${
-                          isSelected ? 'bg-primary text-white' : 'bg-white/10 text-cyan-200'
-                        }`}
-                      >
-                        <Icon className="h-5 w-5" />
+                    <div className="mb-4 flex items-start justify-between">
+                      <div className={cn(
+                        "flex h-12 w-12 items-center justify-center rounded-lg transition-colors",
+                        isSelected ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
+                      )}>
+                        <Icon className="h-6 w-6" />
                       </div>
-                      <div
-                        className={`inline-flex h-5 w-5 items-center justify-center rounded-full border ${
-                          isSelected ? 'border-primary bg-primary text-white' : 'border-white/15 text-transparent'
-                        }`}
-                      >
+                      <div className={cn(
+                        "flex h-6 w-6 items-center justify-center rounded-full border transition-all",
+                        isSelected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-muted-foreground/20 text-transparent"
+                      )}>
                         <Check className="h-3.5 w-3.5" />
                       </div>
                     </div>
-                    <h2 className="mb-1.5 text-base font-semibold text-white">{card.title}</h2>
-                    <p className="text-xs leading-5 text-white/65">{card.description}</p>
+                    <h3 className="mb-2 font-semibold tracking-tight">{card.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{card.description}</p>
+                    
+                    {/* Bottom active border */}
+                    {isSelected && (
+                      <div className="absolute bottom-0 left-0 h-1 w-full rounded-b-xl bg-primary" />
+                    )}
                   </button>
                 );
               })}
             </div>
 
-            <div className="mt-6 space-y-4">
+            {/* Sub-options Area */}
+            <div className="space-y-6">
               {selectedProducts.includes('mobile') && (
-                <div className="rounded-[1.2rem] border border-cyan-400/25 bg-cyan-400/10 p-4">
-                  <div className="mb-3 flex items-center gap-2.5">
-                    <Smartphone className="h-4.5 w-4.5 text-cyan-200" />
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="rounded-xl border border-border bg-card/50 p-6"
+                >
+                  <div className="mb-4 flex items-center gap-3">
+                    <Smartphone className="h-5 w-5 text-primary" />
                     <div>
-                      <h3 className="text-sm font-semibold text-white">Mobile platform</h3>
-                      <p className="text-xs text-white/65">Choose Android, iOS, or both.</p>
+                      <h3 className="font-semibold">Mobile Platform</h3>
+                      <p className="text-sm text-muted-foreground">Target audience devices.</p>
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-2.5">
+                  <div className="flex flex-wrap gap-3">
                     {mobileOptions.map((option) => {
                       const Icon = option.icon;
                       const isSelected = mobilePlatform === option.id;
@@ -242,31 +240,36 @@ export default function Services() {
                           key={option.id}
                           type="button"
                           onClick={() => setMobilePlatform(option.id)}
-                          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition ${
+                          className={cn(
+                            "flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all",
                             isSelected
-                              ? 'border-primary bg-primary text-white'
-                              : 'border-white/15 bg-black/20 text-white/80 hover:border-primary/50'
-                          }`}
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border bg-background hover:border-primary/50"
+                          )}
                         >
-                          <Icon className="h-3.5 w-3.5" />
+                          <Icon className="h-4 w-4" />
                           {option.label}
                         </button>
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
               )}
 
               {selectedProducts.includes('system') && (
-                <div className="rounded-[1.2rem] border border-emerald-400/25 bg-emerald-400/10 p-4">
-                  <div className="mb-3 flex items-center gap-2.5">
-                    <Laptop className="h-4.5 w-4.5 text-emerald-200" />
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="rounded-xl border border-border bg-card/50 p-6"
+                >
+                  <div className="mb-4 flex items-center gap-3">
+                    <Laptop className="h-5 w-5 text-primary" />
                     <div>
-                      <h3 className="text-sm font-semibold text-white">Operating system targets</h3>
-                      <p className="text-xs text-white/65">Choose one or more desktop platforms.</p>
+                      <h3 className="font-semibold">Desktop Platforms</h3>
+                      <p className="text-sm text-muted-foreground">Supported operating systems.</p>
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-2.5">
+                  <div className="flex flex-wrap gap-3">
                     {systemOptions.map((option) => {
                       const Icon = option.icon;
                       const isSelected = systemPlatforms.includes(option.id);
@@ -276,98 +279,86 @@ export default function Services() {
                           key={option.id}
                           type="button"
                           onClick={() => toggleSystemPlatform(option.id)}
-                          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition ${
+                          className={cn(
+                            "flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all",
                             isSelected
-                              ? 'border-emerald-400 bg-emerald-500 text-white'
-                              : 'border-white/15 bg-black/20 text-white/80 hover:border-emerald-400/50'
-                          }`}
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border bg-background hover:border-primary/50"
+                          )}
                         >
-                          <Icon className="h-3.5 w-3.5" />
+                          <Icon className="h-4 w-4" />
                           {option.label}
                         </button>
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
               )}
 
-              <div className="rounded-[1.2rem] border border-white/10 bg-white/5 p-4">
-                <div className="mb-2.5 flex items-center gap-2.5">
-                  <MessageSquareText className="h-4.5 w-4.5 text-primary" />
+              <div className="rounded-xl border border-border bg-card p-6">
+                <div className="mb-4 flex items-center gap-3">
+                  <MessageSquareText className="h-5 w-5 text-primary" />
                   <div>
-                    <h3 className="text-sm font-semibold text-white">Project details</h3>
-                    <p className="text-xs text-white/65">Describe what you want built.</p>
+                    <h3 className="font-semibold">Project Details</h3>
+                    <p className="text-sm text-muted-foreground">Briefly describe your requirements.</p>
                   </div>
                 </div>
                 <textarea
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
-                  placeholder="Example: I need a customer-facing mobile app with a matching web dashboard and admin tools."
-                  className="h-28 w-full resize-none rounded-[1rem] border border-white/10 bg-black/25 px-3 py-2.5 text-xs text-white outline-none transition placeholder:text-white/35 focus:border-primary/70 focus:ring-2 focus:ring-primary/20"
+                  placeholder="e.g., I need a customer-facing mobile app..."
+                  className="min-h-[120px] w-full resize-none rounded-lg border border-border bg-background px-4 py-3 text-sm outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/10"
                 />
               </div>
             </div>
           </section>
 
-          <aside className="rounded-[1.5rem] border border-white/10 bg-black/45 p-4 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-5">
-            <div className="mb-4 flex items-center gap-2.5">
-              <PackageCheck className="h-4.5 w-4.5 text-primary" />
+          {/* Sidebar */}
+          <aside className="h-fit space-y-6 rounded-2xl border border-border bg-card p-6 shadow-sm lg:sticky lg:top-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <PackageCheck className="h-5 w-5" />
+              </div>
               <div>
-                <h2 className="text-base font-semibold text-white">Selected scope</h2>
-                <p className="text-xs text-white/65">Your quote request summary updates live.</p>
+                <h2 className="font-serif italic text-lg text-foreground">Selected Scope</h2>
+                <p className="text-xs text-muted-foreground">Live summary.</p>
               </div>
             </div>
 
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               {selectedProducts.length ? (
                 selectionSummary.map((item) => (
-                  <div key={item} className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-xs text-white/80">
+                  <div key={item} className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground/80">
+                    <Check className="h-3.5 w-3.5 text-primary" />
                     {item}
                   </div>
                 ))
               ) : (
-                <div className="rounded-xl border border-dashed border-white/15 bg-white/5 px-3 py-5 text-xs text-white/50">
-                  Select at least one product to start building the quote request.
+                <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-8 text-center">
+                  <p className="text-sm text-muted-foreground">No products selected.</p>
                 </div>
               )}
             </div>
 
-            <div className="mt-5 rounded-[1.2rem] border border-primary/20 bg-primary/10 p-3.5">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-primary/70">Included Logic</p>
-              <ul className="mt-2.5 space-y-1.5 text-xs text-white/75">
-                <li>Mobile app requires one platform choice.</li>
-                <li>Web app has no sub-option layer.</li>
-                <li>Operating system app supports multiple OS targets.</li>
+            <div className="rounded-xl bg-primary/5 p-4">
+              <p className="mb-2 text-[10px] uppercase tracking-widest text-primary/70 font-semibold">Included Logic</p>
+              <ul className="list-disc pl-4 space-y-1 text-xs text-muted-foreground">
+                <li>Mobile requires OS selection.</li>
+                <li>Desktop allows multiple targets.</li>
               </ul>
             </div>
 
-            <div className="mt-5 rounded-[1.2rem] border border-white/10 bg-white/5 p-3.5">
-              <p className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-white/45">Description</p>
-              <p className="text-xs leading-5 text-white/70">
-                {description.trim() || 'No project details added yet.'}
-              </p>
-            </div>
-
-            <div className="mt-5">
+            <div className="pt-2">
               <ShinyButton
                 onClick={getQuote}
                 disabled={!canSubmit}
-                className={`w-full justify-center px-3 py-1.5 text-xs ${
-                  !canSubmit ? 'cursor-not-allowed opacity-50' : ''
-                }`}
+                className={cn(
+                  "w-full justify-center text-sm font-medium",
+                  !canSubmit && "opacity-50 cursor-not-allowed hover:shadow-none"
+                )}
               >
-                Get Quote
+                Request Quote
               </ShinyButton>
-            </div>
-
-            {!canSubmit && (
-              <p className="mt-2.5 text-[11px] leading-4 text-white/50">
-                Add at least one product, complete any required platform choices, and describe the project to enable the quote action.
-              </p>
-            )}
-
-            <div className="mt-5 border-t border-white/10 pt-3 text-[10px] text-white/40">
-              Categories available: {productCards.map((card) => productLabels[card.id]).join(' • ')}
             </div>
           </aside>
         </motion.div>
