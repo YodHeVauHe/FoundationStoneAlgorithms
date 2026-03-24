@@ -34,7 +34,7 @@ function MainContent() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: "spring", duration: 1.2, bounce: 0.25 }}
           />
-          <div className="space-mono-regular max-w-md rounded-[24px] border border-white/15 bg-black/45 px-6 py-5 text-center text-lg text-foreground shadow-[0_24px_70px_rgba(0,0,0,0.48)] backdrop-blur-md sm:max-w-2xl sm:px-8 sm:py-6 sm:text-xl md:max-w-3xl">
+          <div className="space-mono-regular max-w-md rounded-[24px] border border-white/12 bg-black/35 px-4 py-3 text-center text-lg text-foreground shadow-[0_24px_70px_rgba(0,0,0,0.48)] backdrop-blur-md sm:max-w-2xl sm:px-5 sm:py-4 sm:text-xl md:max-w-3xl">
             <TypingAnimation
               as="q"
               className="block text-lg font-medium leading-8 text-foreground sm:text-xl sm:leading-9"
