@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import {
   ArrowLeft,
@@ -27,6 +27,7 @@ interface CountryOption {
   label: string;
   currency: Currency;
   symbol: string;
+  timezone: string;
 }
 
 const steps = [
@@ -37,15 +38,24 @@ const steps = [
 ] as const;
 
 const countryOptions: CountryOption[] = [
-  { id: 'us', label: 'United States', currency: 'USD', symbol: '$' },
-  { id: 'uk', label: 'United Kingdom', currency: 'GBP', symbol: '£' },
-  { id: 'eu', label: 'European Union', currency: 'EUR', symbol: '€' },
-  { id: 'ca', label: 'Canada', currency: 'CAD', symbol: 'C$' },
-  { id: 'au', label: 'Australia', currency: 'AUD', symbol: 'A$' },
-  { id: 'jp', label: 'Japan', currency: 'JPY', symbol: '¥' },
-  { id: 'in', label: 'India', currency: 'INR', symbol: '₹' },
-  { id: 'br', label: 'Brazil', currency: 'BRL', symbol: 'R$' },
+  { id: 'us', label: 'United States', currency: 'USD', symbol: '$', timezone: 'America/New_York' },
+  { id: 'uk', label: 'United Kingdom', currency: 'GBP', symbol: '£', timezone: 'Europe/London' },
+  { id: 'eu', label: 'European Union', currency: 'EUR', symbol: '€', timezone: 'Europe/Paris' },
+  { id: 'ca', label: 'Canada', currency: 'CAD', symbol: 'C$', timezone: 'America/Toronto' },
+  { id: 'au', label: 'Australia', currency: 'AUD', symbol: 'A$', timezone: 'Australia/Sydney' },
+  { id: 'jp', label: 'Japan', currency: 'JPY', symbol: '¥', timezone: 'Asia/Tokyo' },
+  { id: 'in', label: 'India', currency: 'INR', symbol: '₹', timezone: 'Asia/Kolkata' },
+  { id: 'br', label: 'Brazil', currency: 'BRL', symbol: 'R$', timezone: 'America/Sao_Paulo' },
 ];
+
+const getUserLocation = (): CountryOption => {
+  try {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const matched = countryOptions.find((c) => c.timezone === timezone);
+    if (matched) return matched;
+  } catch {}
+  return countryOptions[0];
+};
 
 const productCards = [
   {
@@ -97,6 +107,12 @@ export default function Services() {
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
   const [quoteResult, setQuoteResult] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!selectedCountry) {
+      setSelectedCountry(getUserLocation());
+    }
+  }, [selectedCountry]);
+
   const selectedProductCard = productCards.find((card) => card.id === selectedProduct) ?? null;
 
   const stepTwoValid = useMemo(() => {
@@ -144,7 +160,7 @@ export default function Services() {
 
   const getQuote = async () => {
     if (!selectedCountry) {
-      alert('Please select your country first');
+      alert('Location not detected. Please refresh the page.');
       return;
     }
 
@@ -152,6 +168,13 @@ export default function Services() {
     setQuoteResult(null);
 
     try {
+      const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+      if (!apiKey) {
+        alert('API key not configured. Please add VITE_OPENROUTER_API_KEY to your .env file.');
+        setIsLoadingQuote(false);
+        return;
+      }
+
       const serviceText = selectedProductCard?.title || '';
       const scopeText = selectionSummary.slice(1).join(', ') || 'Not specified';
 
@@ -165,7 +188,7 @@ export default function Services() {
       setQuoteResult(result);
     } catch (error) {
       console.error('Quote generation failed:', error);
-      alert('Failed to generate quote. Please try again.');
+      alert(`Failed to generate quote: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsLoadingQuote(false);
     }
@@ -544,25 +567,13 @@ export default function Services() {
                   </div>
 
                   <div className="rounded-2xl border border-border bg-background/70 p-4">
-                    <label className="mb-2 block text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
-                      Your Location
-                    </label>
-                    <select
-                      value={selectedCountry?.id || ''}
-                      onChange={(e) => {
-                        const country = countryOptions.find((c) => c.id === e.target.value) || null;
-                        setSelectedCountry(country);
-                        setQuoteResult(null);
-                      }}
-                      className="w-full rounded-xl border border-border bg-card px-4 py-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/10"
-                    >
-                      <option value="">Select your country</option>
-                      {countryOptions.map((country) => (
-                        <option key={country.id} value={country.id}>
-                          {country.label} ({country.currency})
-                        </option>
-                      ))}
-                    </select>
+                    <p className="mb-2 block text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
+                      Your Location (Auto-detected)
+                    </p>
+                    <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm">
+                      <Globe className="h-4 w-4 text-primary" />
+                      {selectedCountry?.label} ({selectedCountry?.currency})
+                    </div>
                   </div>
 
                   <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">

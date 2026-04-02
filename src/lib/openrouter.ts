@@ -3,6 +3,7 @@ interface CountryOption {
   label: string;
   currency: string;
   symbol: string;
+  timezone: string;
 }
 
 interface QuoteRequest {
