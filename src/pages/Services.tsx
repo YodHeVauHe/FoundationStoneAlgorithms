@@ -675,6 +675,17 @@ export default function Services() {
                 )}
               </div>
             </div>
+
+            {quoteResult && currentStep === 4 && (
+              <div className="mt-6 rounded-2xl border border-primary/40 bg-primary/10 p-4">
+                <p className="mb-2 text-xs font-medium uppercase tracking-[0.24em] text-primary/80">
+                  Your Quote
+                </p>
+                <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+                  {quoteResult}
+                </div>
+              </div>
+            )}
           </section>
 
           <aside className="h-fit space-y-4 rounded-[28px] border border-border/80 bg-card/88 p-5 lg:sticky lg:top-8">
@@ -708,17 +719,6 @@ export default function Services() {
                 )}
               </div>
             </div>
-
-            {quoteResult && (
-              <div className="rounded-2xl border border-primary/40 bg-primary/10 p-4">
-                <p className="mb-2 text-xs font-medium uppercase tracking-[0.24em] text-primary/80">
-                  Your Quote
-                </p>
-                <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
-                  {quoteResult}
-                </div>
-              </div>
-            )}
 
             <div className="rounded-2xl border border-border bg-background/70 p-4">
               <p className="mb-3 text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
