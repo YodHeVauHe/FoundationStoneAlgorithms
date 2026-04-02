@@ -652,40 +652,36 @@ export default function Services() {
                   </ShinyButton>
                 ) : (
                   <div className="space-y-3">
-                    <ShinyButton
-                      onClick={getQuote}
-                      disabled={isLoadingQuote || !selectedCountry}
-                      className={cn(
-                        'w-full justify-center px-5 py-3 text-sm',
-                        (!selectedCountry || isLoadingQuote) && 'cursor-not-allowed opacity-45 hover:shadow-none'
-                      )}
-                    >
-                      {isLoadingQuote ? (
-                        <>
-                          <span className="animate-pulse">Generating...</span>
-                        </>
-                      ) : (
-                        <>
-                          Get Quote
-                          <ArrowRight className="h-4 w-4" />
-                        </>
-                      )}
-                    </ShinyButton>
+                    {quoteResult ? (
+                      <div className="flex items-center justify-center gap-2 rounded-xl border border-green-500/40 bg-green-500/10 px-5 py-3 text-sm font-medium text-green-600">
+                        <Check className="h-5 w-5" />
+                        Quoted
+                      </div>
+                    ) : (
+                      <ShinyButton
+                        onClick={getQuote}
+                        disabled={isLoadingQuote || !selectedCountry}
+                        className={cn(
+                          'w-full justify-center px-5 py-3 text-sm',
+                          (!selectedCountry || isLoadingQuote) && 'cursor-not-allowed opacity-45 hover:shadow-none'
+                        )}
+                      >
+                        {isLoadingQuote ? (
+                          <>
+                            <span className="animate-pulse">Generating...</span>
+                          </>
+                        ) : (
+                          <>
+                            Get Quote
+                            <ArrowRight className="h-4 w-4" />
+                          </>
+                        )}
+                      </ShinyButton>
+                    )}
                   </div>
                 )}
               </div>
             </div>
-
-            {quoteResult && currentStep === 4 && (
-              <div className="mt-6 rounded-2xl border border-primary/40 bg-primary/10 p-4">
-                <p className="mb-2 text-xs font-medium uppercase tracking-[0.24em] text-primary/80">
-                  Your Quote
-                </p>
-                <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
-                  {quoteResult}
-                </div>
-              </div>
-            )}
           </section>
 
           <aside className="h-fit space-y-4 rounded-[28px] border border-border/80 bg-card/88 p-5 lg:sticky lg:top-8">
@@ -730,6 +726,17 @@ export default function Services() {
                 <li>Write the key requirements before submitting.</li>
               </ul>
             </div>
+
+            {quoteResult && (
+              <div className="rounded-2xl border border-primary/40 bg-primary/10 p-4">
+                <p className="mb-2 text-xs font-medium uppercase tracking-[0.24em] text-primary/80">
+                  Your Quote
+                </p>
+                <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+                  {quoteResult}
+                </div>
+              </div>
+            )}
           </aside>
         </div>
       </div>
