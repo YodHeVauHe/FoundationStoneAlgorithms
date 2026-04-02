@@ -92,6 +92,9 @@ export default function Services() {
   const [webFocus, setWebFocus] = useState<WebFocus | null>(null);
   const [systemPlatforms, setSystemPlatforms] = useState<SystemPlatform[]>([]);
   const [description, setDescription] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(null);
+  const [isLoadingQuote, setIsLoadingQuote] = useState(false);
+  const [quoteResult, setQuoteResult] = useState<string | null>(null);
 
   const selectedProductCard = productCards.find((card) => card.id === selectedProduct) ?? null;
 
