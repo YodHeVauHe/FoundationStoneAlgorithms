@@ -543,6 +543,28 @@ export default function Services() {
                     </p>
                   </div>
 
+                  <div className="rounded-2xl border border-border bg-background/70 p-4">
+                    <label className="mb-2 block text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
+                      Your Location
+                    </label>
+                    <select
+                      value={selectedCountry?.id || ''}
+                      onChange={(e) => {
+                        const country = countryOptions.find((c) => c.id === e.target.value) || null;
+                        setSelectedCountry(country);
+                        setQuoteResult(null);
+                      }}
+                      className="w-full rounded-xl border border-border bg-card px-4 py-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    >
+                      <option value="">Select your country</option>
+                      {countryOptions.map((country) => (
+                        <option key={country.id} value={country.id}>
+                          {country.label} ({country.currency})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
                   <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
                     <div className="rounded-2xl border border-border bg-background/70 p-5">
                       <div className="mb-4 flex items-center gap-3">
@@ -618,10 +640,38 @@ export default function Services() {
                     <ArrowRight className="h-4 w-4" />
                   </ShinyButton>
                 ) : (
-                  <ShinyButton onClick={getQuote} className="px-5 py-3 text-sm">
-                    Request Quote
-                    <ArrowRight className="h-4 w-4" />
-                  </ShinyButton>
+                  <div className="space-y-3">
+                    {quoteResult && (
+                      <div className="rounded-2xl border border-primary/40 bg-primary/10 p-4">
+                        <p className="mb-2 text-xs font-medium uppercase tracking-[0.24em] text-primary/80">
+                          Your Quote
+                        </p>
+                        <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+                          {quoteResult}
+                        </div>
+                      </div>
+                    )}
+
+                    <ShinyButton
+                      onClick={getQuote}
+                      disabled={isLoadingQuote || !selectedCountry}
+                      className={cn(
+                        'px-5 py-3 text-sm',
+                        (!selectedCountry || isLoadingQuote) && 'cursor-not-allowed opacity-45 hover:shadow-none'
+                      )}
+                    >
+                      {isLoadingQuote ? (
+                        <>
+                          <span className="animate-pulse">Generating...</span>
+                        </>
+                      ) : (
+                        <>
+                          Get Quote
+                          <ArrowRight className="h-4 w-4" />
+                        </>
+                      )}
+                    </ShinyButton>
+                  </div>
                 )}
               </div>
             </div>
