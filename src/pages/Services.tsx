@@ -19,6 +19,14 @@ type ProductId = 'mobile' | 'web' | 'system';
 type MobilePlatform = 'android' | 'ios' | 'both';
 type WebFocus = 'dashboard' | 'portal' | 'website';
 type SystemPlatform = 'linux' | 'macos' | 'windows';
+type Currency = 'USD' | 'GBP' | 'EUR' | 'CAD' | 'AUD' | 'JPY' | 'INR' | 'BRL';
+
+interface CountryOption {
+  id: string;
+  label: string;
+  currency: Currency;
+  symbol: string;
+}
 
 const steps = [
   { id: 1, label: 'Service' },
@@ -26,6 +34,17 @@ const steps = [
   { id: 3, label: 'Details' },
   { id: 4, label: 'Review' },
 ] as const;
+
+const countryOptions: CountryOption[] = [
+  { id: 'us', label: 'United States', currency: 'USD', symbol: '$' },
+  { id: 'uk', label: 'United Kingdom', currency: 'GBP', symbol: '£' },
+  { id: 'eu', label: 'European Union', currency: 'EUR', symbol: '€' },
+  { id: 'ca', label: 'Canada', currency: 'CAD', symbol: 'C$' },
+  { id: 'au', label: 'Australia', currency: 'AUD', symbol: 'A$' },
+  { id: 'jp', label: 'Japan', currency: 'JPY', symbol: '¥' },
+  { id: 'in', label: 'India', currency: 'INR', symbol: '₹' },
+  { id: 'br', label: 'Brazil', currency: 'BRL', symbol: 'R$' },
+];
 
 const productCards = [
   {
