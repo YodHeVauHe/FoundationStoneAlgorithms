@@ -14,6 +14,7 @@ import { FaAndroid, FaApple, FaLinux, FaWindows } from 'react-icons/fa6';
 import { Link } from 'react-router-dom';
 import { ShinyButton } from '@/components/magicui/shiny-button';
 import { cn } from '@/lib/utils';
+import { generateQuote } from '@/lib/openrouter';
 
 type ProductId = 'mobile' | 'web' | 'system';
 type MobilePlatform = 'android' | 'ios' | 'both';
@@ -141,9 +142,33 @@ export default function Services() {
     return lines;
   }, [mobilePlatform, selectedProduct, selectedProductCard, systemPlatforms, webFocus]);
 
-  const getQuote = () => {
-    const summary = [...selectionSummary, `Project details: ${description.trim()}`].join('\n');
-    alert(`Quote Request Summary\n\n${summary}`);
+  const getQuote = async () => {
+    if (!selectedCountry) {
+      alert('Please select your country first');
+      return;
+    }
+
+    setIsLoadingQuote(true);
+    setQuoteResult(null);
+
+    try {
+      const serviceText = selectedProductCard?.title || '';
+      const scopeText = selectionSummary.slice(1).join(', ') || 'Not specified';
+
+      const result = await generateQuote({
+        service: serviceText,
+        scope: scopeText,
+        details: description.trim(),
+        country: selectedCountry,
+      });
+
+      setQuoteResult(result);
+    } catch (error) {
+      console.error('Quote generation failed:', error);
+      alert('Failed to generate quote. Please try again.');
+    } finally {
+      setIsLoadingQuote(false);
+    }
   };
 
   const chooseProduct = (product: ProductId) => {
