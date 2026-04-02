@@ -652,22 +652,11 @@ export default function Services() {
                   </ShinyButton>
                 ) : (
                   <div className="space-y-3">
-                    {quoteResult && (
-                      <div className="rounded-2xl border border-primary/40 bg-primary/10 p-4">
-                        <p className="mb-2 text-xs font-medium uppercase tracking-[0.24em] text-primary/80">
-                          Your Quote
-                        </p>
-                        <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
-                          {quoteResult}
-                        </div>
-                      </div>
-                    )}
-
                     <ShinyButton
                       onClick={getQuote}
                       disabled={isLoadingQuote || !selectedCountry}
                       className={cn(
-                        'px-5 py-3 text-sm',
+                        'w-full justify-center px-5 py-3 text-sm',
                         (!selectedCountry || isLoadingQuote) && 'cursor-not-allowed opacity-45 hover:shadow-none'
                       )}
                     >
@@ -719,6 +708,17 @@ export default function Services() {
                 )}
               </div>
             </div>
+
+            {quoteResult && (
+              <div className="rounded-2xl border border-primary/40 bg-primary/10 p-4">
+                <p className="mb-2 text-xs font-medium uppercase tracking-[0.24em] text-primary/80">
+                  Your Quote
+                </p>
+                <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+                  {quoteResult}
+                </div>
+              </div>
+            )}
 
             <div className="rounded-2xl border border-border bg-background/70 p-4">
               <p className="mb-3 text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
