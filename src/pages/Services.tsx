@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import {
   ArrowLeft,
@@ -46,6 +46,11 @@ const countryOptions: CountryOption[] = [
   { id: 'jp', label: 'Japan', currency: 'JPY', symbol: '¥', timezone: 'Asia/Tokyo' },
   { id: 'in', label: 'India', currency: 'INR', symbol: '₹', timezone: 'Asia/Kolkata' },
   { id: 'br', label: 'Brazil', currency: 'BRL', symbol: 'R$', timezone: 'America/Sao_Paulo' },
+  { id: 'us', label: 'United States', currency: 'USD', symbol: '$', timezone: 'America/Los_Angeles' },
+  { id: 'us', label: 'United States', currency: 'USD', symbol: '$', timezone: 'America/Chicago' },
+  { id: 'us', label: 'United States', currency: 'USD', symbol: '$', timezone: 'America/Denver' },
+  { id: 'eu', label: 'European Union', currency: 'EUR', symbol: '€', timezone: 'Europe/Berlin' },
+  { id: 'eu', label: 'European Union', currency: 'EUR', symbol: '€', timezone: 'Europe/Amsterdam' },
 ];
 
 const getUserLocation = (): CountryOption => {
@@ -53,7 +58,9 @@ const getUserLocation = (): CountryOption => {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const matched = countryOptions.find((c) => c.timezone === timezone);
     if (matched) return matched;
-  } catch {}
+  } catch (e) {
+    console.warn('Timezone detection failed:', e);
+  }
   return countryOptions[0];
 };
 
@@ -103,15 +110,9 @@ export default function Services() {
   const [webFocus, setWebFocus] = useState<WebFocus | null>(null);
   const [systemPlatforms, setSystemPlatforms] = useState<SystemPlatform[]>([]);
   const [description, setDescription] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(null);
+  const [selectedCountry] = useState<CountryOption | null>(() => getUserLocation());
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
   const [quoteResult, setQuoteResult] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!selectedCountry) {
-      setSelectedCountry(getUserLocation());
-    }
-  }, [selectedCountry]);
 
   const selectedProductCard = productCards.find((card) => card.id === selectedProduct) ?? null;
 
