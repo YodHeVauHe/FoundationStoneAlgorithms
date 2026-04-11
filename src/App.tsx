@@ -45,7 +45,43 @@ const rotatingQuotes = [
   'Intelligent Software for all systems, made in the image of our clients customization',
 ];
 
-function MainContent() {
+function HeroLogo() {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const image = new Image();
+    image.src = whiteLogo;
+
+    if (image.complete) {
+      setIsLoaded(true);
+      return undefined;
+    }
+
+    image.onload = () => setIsLoaded(true);
+
+    return () => {
+      image.onload = null;
+    };
+  }, []);
+
+  return (
+    <div className="relative h-52 w-52 sm:h-64 sm:w-64 md:h-80 md:w-80">
+      {!isLoaded ? <div aria-hidden="true" className="h-full w-full rounded-full bg-white/5" /> : null}
+      {isLoaded ? (
+        <motion.img
+          src={whiteLogo}
+          alt="Foundation Stone Algorithms logo"
+          className="absolute inset-0 h-full w-full object-contain"
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: 'spring', duration: 1.2, bounce: 0.25 }}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function RotatingQuote() {
   const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
@@ -56,6 +92,25 @@ function MainContent() {
     return () => window.clearInterval(intervalId);
   }, []);
 
+  return (
+    <div className="relative min-h-[7.5rem] sm:min-h-[6.75rem]">
+      <AnimatePresence mode="wait">
+        <motion.q
+          key={rotatingQuotes[quoteIndex]}
+          className="absolute inset-0 block text-lg font-medium leading-8 text-foreground sm:text-xl sm:leading-9"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.45, ease: 'linear' }}
+        >
+          {rotatingQuotes[quoteIndex]}
+        </motion.q>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function MainContent() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
       <div className="fixed inset-0 z-0">
@@ -72,14 +127,7 @@ function MainContent() {
 
       <section className="relative z-10 grid min-h-screen w-full grid-cols-1 lg:grid-cols-[1.05fr_0.95fr]">
         <div className="relative flex min-h-[46vh] flex-col items-center justify-center gap-6 px-6 py-12 lg:min-h-screen lg:px-10">
-          <motion.img
-            src={whiteLogo}
-            alt="Foundation Stone Algorithms logo"
-            className="h-52 w-52 object-contain sm:h-64 sm:w-64 md:h-80 md:w-80"
-            initial={{ y: -100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ type: 'spring', duration: 1.2, bounce: 0.25 }}
-          />
+          <HeroLogo />
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -96,20 +144,7 @@ function MainContent() {
         <div className="relative flex items-center px-6 py-10 lg:px-10">
           <div className="mx-auto flex w-full max-w-xl flex-col gap-6 rounded-[32px] border border-white/10 bg-black/30 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-md sm:p-6">
             <div className="space-mono-regular rounded-[24px] border border-white/12 bg-black/35 px-4 py-3 text-left text-lg text-foreground shadow-[0_24px_70px_rgba(0,0,0,0.48)] sm:px-5 sm:py-4 sm:text-xl">
-              <div className="relative min-h-[7.5rem] sm:min-h-[6.75rem]">
-                <AnimatePresence mode="wait">
-                  <motion.q
-                    key={rotatingQuotes[quoteIndex]}
-                    className="absolute inset-0 block text-lg font-medium leading-8 text-foreground sm:text-xl sm:leading-9"
-                    initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
-                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                    exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
-                    transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    {rotatingQuotes[quoteIndex]}
-                  </motion.q>
-                </AnimatePresence>
-              </div>
+              <RotatingQuote />
               <div className="mt-4 flex items-center justify-end gap-2">
                 <span className="inline-flex rounded-[4px] border border-white/15 bg-white/6 px-1.5 py-px text-[7px] uppercase tracking-[0.12em] text-foreground/65">
                   Head Agent

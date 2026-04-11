@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { memo, useRef, useEffect } from 'react';
 
 interface LetterGlitchProps {
     glitchColors: string[];
@@ -218,4 +218,4 @@ const LetterGlitch: React.FC<LetterGlitchProps> = ({
     return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />;
 };
 
-export default LetterGlitch;
+export default memo(LetterGlitch);
