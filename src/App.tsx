@@ -1,8 +1,9 @@
 import './App.css';
+import { useEffect, useState } from 'react';
 import Folder from './components/Folder.jsx';
 import { Ripple } from './components/magicui/ripple';
 import whiteLogo from './assets/white.png';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import LetterGlitch from './components/ui/letter-glitch';
 import { ShinyButton } from './components/magicui/shiny-button';
@@ -39,7 +40,22 @@ const projectFolders = [
   { title: 'TradingWindow X', accent: 'Restricted Project', color: '#22c55e' },
 ];
 
+const rotatingQuotes = [
+  'We create solutions for our clients with products powered by artificial intelligent agents',
+  'Intelligent Software for all systems, made in the image of our clients customization',
+];
+
 function MainContent() {
+  const [quoteIndex, setQuoteIndex] = useState(0);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setQuoteIndex((currentIndex) => (currentIndex + 1) % rotatingQuotes.length);
+    }, 9000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
       <div className="fixed inset-0 z-0">
@@ -80,9 +96,20 @@ function MainContent() {
         <div className="relative flex items-center px-6 py-10 lg:px-10">
           <div className="mx-auto flex w-full max-w-xl flex-col gap-6 rounded-[32px] border border-white/10 bg-black/30 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-md sm:p-6">
             <div className="space-mono-regular rounded-[24px] border border-white/12 bg-black/35 px-4 py-3 text-left text-lg text-foreground shadow-[0_24px_70px_rgba(0,0,0,0.48)] sm:px-5 sm:py-4 sm:text-xl">
-              <q className="block text-lg font-medium leading-8 text-foreground sm:text-xl sm:leading-9">
-                We create solutions for our clients with products powered by artificial intelligent agents
-              </q>
+              <div className="relative min-h-[7.5rem] sm:min-h-[6.75rem]">
+                <AnimatePresence mode="wait">
+                  <motion.q
+                    key={rotatingQuotes[quoteIndex]}
+                    className="absolute inset-0 block text-lg font-medium leading-8 text-foreground sm:text-xl sm:leading-9"
+                    initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
+                    transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    {rotatingQuotes[quoteIndex]}
+                  </motion.q>
+                </AnimatePresence>
+              </div>
               <div className="mt-4 flex items-center justify-end gap-2">
                 <span className="inline-flex rounded-[4px] border border-white/15 bg-white/6 px-1.5 py-px text-[7px] uppercase tracking-[0.12em] text-foreground/65">
                   Head Agent
