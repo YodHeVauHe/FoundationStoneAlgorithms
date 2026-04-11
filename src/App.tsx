@@ -2,7 +2,6 @@ import './App.css';
 import Folder from './components/Folder.jsx';
 import { Ripple } from './components/magicui/ripple';
 import whiteLogo from './assets/white.png';
-import { TypingAnimation } from './components/magicui/typing-animation';
 import { motion } from 'motion/react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import LetterGlitch from './components/ui/letter-glitch';
@@ -81,15 +80,9 @@ function MainContent() {
         <div className="relative flex items-center px-6 py-10 lg:px-10">
           <div className="mx-auto flex w-full max-w-xl flex-col gap-6 rounded-[32px] border border-white/10 bg-black/30 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-md sm:p-6">
             <div className="space-mono-regular rounded-[24px] border border-white/12 bg-black/35 px-4 py-3 text-left text-lg text-foreground shadow-[0_24px_70px_rgba(0,0,0,0.48)] sm:px-5 sm:py-4 sm:text-xl">
-              <TypingAnimation
-                as="q"
-                className="block text-lg font-medium leading-8 text-foreground sm:text-xl sm:leading-9"
-                duration={100}
-                delay={1500}
-                startOnView={true}
-              >
+              <q className="block text-lg font-medium leading-8 text-foreground sm:text-xl sm:leading-9">
                 We create solutions for our clients with products powered by artificial intelligent agents
-              </TypingAnimation>
+              </q>
               <div className="mt-4 flex items-center justify-end gap-2">
                 <span className="inline-flex rounded-[4px] border border-white/15 bg-white/6 px-1.5 py-px text-[7px] uppercase tracking-[0.12em] text-foreground/65">
                   Head Agent
