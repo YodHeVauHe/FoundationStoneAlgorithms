@@ -141,46 +141,50 @@ function MainContent() {
           </motion.div>
         </div>
 
-        <div className="relative flex items-center px-6 py-10 lg:px-10">
-          <div className="mx-auto flex w-full max-w-xl flex-col gap-6 rounded-[32px] border border-white/10 bg-black/30 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-md sm:p-6">
-            <div className="space-mono-regular rounded-[24px] border border-white/12 bg-black/35 px-4 py-3 text-left text-lg text-foreground shadow-[0_24px_70px_rgba(0,0,0,0.48)] sm:px-5 sm:py-4 sm:text-xl">
-              <RotatingQuote />
-              <div className="mt-4 flex items-center justify-end gap-2">
-                <span className="inline-flex rounded-[4px] border border-white/15 bg-white/6 px-1.5 py-px text-[7px] uppercase tracking-[0.12em] text-foreground/65">
-                  Head Agent
+        <div className="relative flex items-center justify-center px-6 py-10 lg:px-12 w-full">
+          <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
+            
+            <div className="relative overflow-hidden rounded-[24px] border border-border/80 bg-card/88 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
+              <div className="absolute top-0 left-0 w-1/2 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+              <div className="space-mono-regular text-lg leading-relaxed text-foreground sm:text-xl">
+                <RotatingQuote />
+              </div>
+              <div className="mt-6 flex items-center justify-between border-t border-border pt-5">
+                <span className="inline-flex rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[9px] uppercase tracking-[0.15em] text-primary">
+                  Internal Directive
                 </span>
-                <cite className="text-right text-sm italic text-foreground/80 sm:text-base">- ZaSourceCode</cite>
+                <div className="flex items-center gap-2">
+                  <div className="h-px w-4 bg-muted-foreground/40"></div>
+                  <cite className="text-sm font-bold tracking-wide text-foreground/90">ZaSourceCode</cite>
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <h2 className="space-mono-bold text-xl text-foreground sm:text-2xl">Projects</h2>
-                <span className="text-xs uppercase tracking-[0.32em] text-foreground/45">Restricted</span>
-              </div>
+            <div className="flex items-center justify-between rounded-xl border border-border/80 bg-card/88 px-5 py-3 backdrop-blur-lg">
+              <h2 className="space-mono-bold text-lg uppercase tracking-widest text-foreground">Workspaces</h2>
+              <span className="flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-[9px] uppercase tracking-[0.2em] text-red-500 font-medium">
+                <Lock className="h-3 w-3" />
+                Encrypted
+              </span>
+            </div>
 
-              <div className="mx-auto grid w-full max-w-xl grid-cols-2 gap-x-3 gap-y-4 pt-2 sm:max-w-2xl sm:gap-x-5 sm:gap-y-6 sm:pt-3">
-                {projectFolders.map((project, index) => (
-                  <div
-                    key={project.title}
-                    className={[
-                      'flex min-h-[7.5rem] w-full flex-col items-center justify-start gap-2 px-1 pt-2',
-                      index === 0
-                        ? 'col-span-2 justify-self-center'
-                        : index === 1
-                          ? 'justify-self-start'
-                          : 'justify-self-end',
-                    ].join(' ')}
-                  >
-                    <Folder color={project.color} size={0.82} items={createRestrictedItems(project.title)} />
-                    <div className="text-center">
-                      <p className="space-mono-bold text-sm text-foreground">{project.title}</p>
-                      <p className="text-xs uppercase tracking-[0.24em] text-foreground/55">{project.accent}</p>
-                    </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {projectFolders.map((project) => (
+                <div
+                  key={project.title}
+                  className="group relative flex flex-col items-center justify-between rounded-[20px] border border-border/80 bg-card/88 p-5 backdrop-blur-xl transition-all hover:border-primary/35 hover:bg-card shadow-xl"
+                >
+                  <div className="flex h-40 w-full items-center justify-center">
+                    <Folder color={project.color} size={0.9} items={createRestrictedItems(project.title)} />
                   </div>
-                ))}
-              </div>
+                  <div className="mt-4 w-full text-center">
+                    <h3 className="space-mono-bold text-sm tracking-wide text-foreground">{project.title}</h3>
+                    <p className="mt-1.5 text-[9px] uppercase tracking-[0.2em] text-muted-foreground">{project.accent}</p>
+                  </div>
+                </div>
+              ))}
             </div>
+
           </div>
         </div>
       </section>

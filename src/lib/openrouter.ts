@@ -20,18 +20,19 @@ export async function generateQuote(request: QuoteRequest): Promise<string> {
     throw new Error('OpenRouter API key not configured');
   }
 
-  const systemPrompt = `You are a software development pricing expert. Provide a concise price estimate in ${request.country.currency} (${request.country.symbol}).
+  const systemPrompt = `You are a software development pricing expert. Provide a concise price estimate in the local currency of ${request.country.label}. If a specific currency was requested (${request.country.currency} ${request.country.symbol}), use that.
 
 Format:
-- Price: {symbol}{amount}
+- Price: [Local Currency Symbol][Amount]
 - Simple breakdown in 1-2 lines
 - Keep it brief and professional`;
 
   const userContent = `Project Type: ${request.service}
 Scope: ${request.scope}
 Details: ${request.details}
+Country: ${request.country.label}
 
-Provide a concise quote in ${request.country.currency}.`;
+Provide a concise quote in the local currency of ${request.country.label}.`;
 
   const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
