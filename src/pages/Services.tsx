@@ -117,11 +117,19 @@ export default function Services() {
 
   // Ask for location permission and determine country
   useEffect(() => {
-    if ('geolocation' in navigator) {
-      setIsLoadingLocation(true);
-      setLocationError(null);
+    if (!('geolocation' in navigator)) {
+      setLocationError('Geolocation not supported');
+      return;
+    }
+
+    let isMounted = true;
+    setIsLoadingLocation(true);
+    setLocationError(null);
+
+    const tryGetPosition = () => {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
+          if (!isMounted) return;
           try {
             const { latitude, longitude } = position.coords;
             const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
@@ -136,10 +144,11 @@ export default function Services() {
 
               const matched = countryOptions.find((c) => c.id === code);
               if (matched) {
-                setSelectedCountry(matched);
-                setLocationError(null);
+                if (isMounted) {
+                  setSelectedCountry(matched);
+                  setLocationError(null);
+                }
               } else {
-                // If the country is not in our preset list, fetch its currency dynamically
                 let currencyCode = 'USD';
                 let currencySymbol = '$';
                 try {
@@ -154,35 +163,48 @@ export default function Services() {
                   console.warn('Failed to fetch currency, defaulting to USD', err);
                 }
 
-                setSelectedCountry({
-                  id: code,
-                  label: data.address.country || code.toUpperCase(),
-                  currency: currencyCode,
-                  symbol: currencySymbol,
-                  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                });
-                setLocationError(null);
+                if (isMounted) {
+                  setSelectedCountry({
+                    id: code,
+                    label: data.address.country || code.toUpperCase(),
+                    currency: currencyCode,
+                    symbol: currencySymbol,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                  });
+                  setLocationError(null);
+                }
               }
             } else {
-              setLocationError('Could not determine country');
+              if (isMounted) setLocationError('Could not determine country');
             }
           } catch (e) {
             console.error('Reverse geocoding failed:', e);
-            setLocationError('Location service error');
+            if (isMounted) setLocationError('Location service error');
           } finally {
-            setIsLoadingLocation(false);
+            if (isMounted) setIsLoadingLocation(false);
           }
         },
         (error) => {
-          console.warn('Geolocation denied or failed:', error);
-          setLocationError(error.message);
-          setIsLoadingLocation(false);
+          if (!isMounted) return;
+          // error.code === 3 is TIMEOUT
+          if (error.code === error.TIMEOUT || error.code === 3) {
+            console.warn('Geolocation timed out, retrying...');
+            tryGetPosition();
+          } else {
+            console.warn('Geolocation denied or failed:', error);
+            setLocationError(error.message);
+            setIsLoadingLocation(false);
+          }
         },
-        { enableHighAccuracy: false, timeout: 10000, maximumAge: 0 }
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 0 }
       );
-    } else {
-      setLocationError('Geolocation not supported');
-    }
+    };
+
+    tryGetPosition();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
   const [quoteResult, setQuoteResult] = useState<string | null>(null);
@@ -292,11 +314,11 @@ export default function Services() {
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-background text-foreground selection:bg-primary/20 selection:text-foreground">
+    <div className="relative min-h-[100svh] w-full overflow-hidden bg-background text-foreground selection:bg-primary/20 selection:text-foreground">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.18),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.03),transparent_24%)]" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.08),transparent_60%)]" />
 
-      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-6xl flex-col px-4 py-6 sm:p-6 lg:p-8">
         <div className="mb-4 flex items-center justify-between">
           <Link
             to="/"
@@ -335,7 +357,7 @@ export default function Services() {
                     style={{ width: `${(currentStep / steps.length) * 100}%` }}
                   />
                 </div>
-                <div className="grid gap-2 sm:grid-cols-4">
+                <div className="grid gap-2 grid-cols-2 sm:grid-cols-4">
                   {steps.map((step) => {
                     const isActive = step.id === currentStep;
                     const isComplete = step.id < currentStep;
@@ -646,7 +668,7 @@ export default function Services() {
                       {isLoadingLocation ? (
                         <span className="text-primary animate-pulse">(Detecting...)</span>
                       ) : locationError ? (
-                        <span className="text-destructive">(Error: {locationError})</span>
+                        <span>(Auto-detected)</span>
                       ) : (
                         <span className="text-green-500">(Verified)</span>
                       )}

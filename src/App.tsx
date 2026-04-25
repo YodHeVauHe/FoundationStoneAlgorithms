@@ -112,7 +112,7 @@ function RotatingQuote() {
 
 function MainContent() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background">
+    <div className="relative min-h-[100svh] overflow-hidden bg-background">
       <div className="fixed inset-0 z-0">
         <LetterGlitch
           glitchColors={['#0ea5e9', '#06b6d4', '#3b82f6', '#0c4a6e', '#164e63']}
@@ -125,8 +125,8 @@ function MainContent() {
       </div>
       <Ripple className="fixed inset-0 z-0" mainCircleSize={260} mainCircleOpacity={0.28} numCircles={9} />
 
-      <section className="relative z-10 grid min-h-screen w-full grid-cols-1 lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="relative flex min-h-[46vh] flex-col items-center justify-center gap-6 px-6 py-12 lg:min-h-screen lg:px-10">
+      <section className="relative z-10 grid min-h-[100svh] w-full grid-cols-1 pb-10 lg:grid-cols-[1.05fr_0.95fr] lg:pb-0">
+        <div className="relative flex min-h-[46svh] flex-col items-center justify-center gap-6 px-6 py-12 lg:min-h-[100svh] lg:px-10">
           <HeroLogo />
           <motion.div
             initial={{ y: 20, opacity: 0 }}
