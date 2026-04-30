@@ -726,13 +726,13 @@ export default function Services() {
               )}
             </motion.div>
 
-            <div className="flex flex-col gap-2 border-t border-border/80 pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center justify-between gap-2 border-t border-border/80 pt-4 w-full">
               <button
                 type="button"
                 onClick={goBack}
                 disabled={currentStep === 1}
                 className={cn(
-                  'inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-xs font-medium text-foreground transition-colors',
+                  'inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-xs font-medium text-foreground transition-colors sm:px-3',
                   currentStep === 1 && 'cursor-not-allowed opacity-45'
                 )}
               >
@@ -740,13 +740,13 @@ export default function Services() {
                 Back
               </button>
 
-              <div className="flex items-center gap-2 w-full sm:w-auto">
+              <div className="flex items-center gap-2">
                 {currentStep < 4 ? (
                   <ShinyButton
                     onClick={goNext}
                     disabled={!canMoveForward}
                     className={cn(
-                      'px-4 py-2 text-xs w-full sm:w-auto justify-center',
+                      'px-4 py-2 text-xs justify-center',
                       !canMoveForward && 'cursor-not-allowed opacity-45 hover:shadow-none'
                     )}
                   >
@@ -754,7 +754,7 @@ export default function Services() {
                     <ArrowRight className="h-3 w-3" />
                   </ShinyButton>
                 ) : (
-                  <div className="space-y-2 w-full">
+                  <div className="space-y-2">
                     {quoteResult ? (
                       <div className="flex items-center justify-center gap-1.5 rounded-lg border border-green-500/40 bg-green-500/10 px-4 py-2 text-xs font-medium text-green-600">
                         <Check className="h-4 w-4" />
@@ -765,7 +765,7 @@ export default function Services() {
                         onClick={getQuote}
                         disabled={isLoadingQuote || !selectedCountry}
                         className={cn(
-                          'w-full justify-center px-4 py-2 text-xs',
+                          'justify-center px-4 py-2 text-xs',
                           (!selectedCountry || isLoadingQuote) && 'cursor-not-allowed opacity-45 hover:shadow-none'
                         )}
                       >
