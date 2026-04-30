@@ -35,9 +35,9 @@ const createRestrictedItems = (projectName: string) =>
   ));
 
 const projectFolders = [
-  { title: 'TokenWork Bond', accent: 'Live Project', color: '#ef4444' },
-  { title: 'CallCenter X', accent: 'Restricted Project', color: '#38bdf8' },
-  { title: 'TradingWindow X', accent: 'Restricted Project', color: '#22c55e' },
+  { title: 'BacktestEngine', color: '#ef4444' },
+  { title: 'TradeInsight', color: '#38bdf8' },
+  { title: 'CallCenterX', color: '#22c55e' },
 ];
 
 const rotatingQuotes = [
@@ -174,12 +174,11 @@ function MainContent() {
                   key={project.title}
                   className="group relative flex flex-col items-center justify-between rounded-[20px] border border-border/80 bg-card/88 p-5 backdrop-blur-xl transition-all hover:border-primary/35 hover:bg-card shadow-xl"
                 >
-                  <div className="flex h-40 w-full items-center justify-center">
+                  <div className="flex h-28 w-full items-center justify-center">
                     <Folder color={project.color} size={0.9} items={createRestrictedItems(project.title)} />
                   </div>
-                  <div className="mt-4 w-full text-center">
+                  <div className="mt-0 w-full text-center">
                     <h3 className="space-mono-bold text-sm tracking-wide text-foreground">{project.title}</h3>
-                    <p className="mt-1.5 text-[9px] uppercase tracking-[0.2em] text-muted-foreground">{project.accent}</p>
                   </div>
                 </div>
               ))}
