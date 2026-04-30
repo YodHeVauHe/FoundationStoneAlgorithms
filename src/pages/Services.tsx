@@ -333,7 +333,7 @@ export default function Services() {
         </div>
 
         <div className="grid flex-1 gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
-          <section className="rounded-[20px] border border-border/80 bg-card/88 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.32)] sm:p-5">
+          <section className="flex h-fit flex-col rounded-[20px] border border-border/80 bg-card/88 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.32)] sm:p-5">
             <div className="mb-4 space-y-3">
               <div className="space-y-1">
                 <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-primary/80">Get a Quote</p>
@@ -726,7 +726,7 @@ export default function Services() {
               )}
             </motion.div>
 
-            <div className="mt-6 flex flex-col gap-2 border-t border-border/80 pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-2 border-t border-border/80 pt-4 sm:flex-row sm:items-center sm:justify-between">
               <button
                 type="button"
                 onClick={goBack}
@@ -740,13 +740,13 @@ export default function Services() {
                 Back
               </button>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 {currentStep < 4 ? (
                   <ShinyButton
                     onClick={goNext}
                     disabled={!canMoveForward}
                     className={cn(
-                      'px-4 py-2 text-xs',
+                      'px-4 py-2 text-xs w-full sm:w-auto justify-center',
                       !canMoveForward && 'cursor-not-allowed opacity-45 hover:shadow-none'
                     )}
                   >
@@ -754,7 +754,7 @@ export default function Services() {
                     <ArrowRight className="h-3 w-3" />
                   </ShinyButton>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="space-y-2 w-full">
                     {quoteResult ? (
                       <div className="flex items-center justify-center gap-1.5 rounded-lg border border-green-500/40 bg-green-500/10 px-4 py-2 text-xs font-medium text-green-600">
                         <Check className="h-4 w-4" />
