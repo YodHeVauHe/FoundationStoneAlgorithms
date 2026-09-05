@@ -74,6 +74,8 @@ Layout and flow unchanged (header row, main wizard card + sticky summary sidebar
 
 ## 7. Motion & accessibility
 
+> **Addendum (2026-09-05, user-directed):** The home page was upgraded from simple entrance reveals to scroll-driven layered depth, per user feedback that the static version read as generic. Implemented with motion v12's documented scroll API (`useScroll`/`useTransform`/`useSpring` — motion.dev) rather than CSS scroll-driven `animation-timeline`, because Firefox support for the CSS property still lags (MDN/CanIUse) and motion is already a dependency. Layers: ambient glow/grid counter-drift with grid fade; hero exit parallax with depth-of-field blur; capability cards with per-card depth drift (0.6/1/1.4) and spring smoothing; kinetic statement line; top scroll-progress rail; sticky nav that gains a blur backdrop on scroll. The wizard page keeps the restrained motion from the original spec. All scroll transforms remain gated behind `useReducedMotion`.
+
 - Entrances: fade + 12px rise, 0.4–0.5s ease-out, stagger ≤3 elements, using `motion/react`.
 - Hovers: border-color shift + `translateY(-2px)`; no scale springs, no pulsing CTAs (the current `animate-pulse` on the hero CTA is removed).
 - Exactly one ambient element app-wide: the hero glow (static; no animation loop).
