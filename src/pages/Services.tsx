@@ -11,8 +11,8 @@ import {
   Smartphone,
 } from 'lucide-react';
 import { FaAndroid, FaApple, FaLinux, FaWindows } from 'react-icons/fa6';
-import { Link } from 'react-router-dom';
-import { ShinyButton } from '@/components/magicui/shiny-button';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { generateQuote } from '@/lib/openrouter';
 
@@ -206,8 +206,20 @@ export default function Services() {
       isMounted = false;
     };
   }, []);
+
+  // Deep-link preselection from home capability cards: /services?type=mobile|web|system
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const type = searchParams.get('type');
+    if (type === 'mobile' || type === 'web' || type === 'system') {
+      setSelectedProduct(type);
+    }
+  }, [searchParams]);
+
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
   const [quoteResult, setQuoteResult] = useState<string | null>(null);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
 
   const selectedProductCard = productCards.find((card) => card.id === selectedProduct) ?? null;
 
@@ -256,17 +268,18 @@ export default function Services() {
 
   const getQuote = async () => {
     if (!selectedCountry) {
-      alert('Location not detected. Please refresh the page.');
+      setQuoteError('Location not detected — refresh the page to retry.');
       return;
     }
 
     setIsLoadingQuote(true);
     setQuoteResult(null);
+    setQuoteError(null);
 
     try {
       const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
       if (!apiKey) {
-        alert('API key not configured. Please add VITE_OPENROUTER_API_KEY to your .env file.');
+        setQuoteError('Quote service is not configured. Add VITE_OPENROUTER_API_KEY to your .env file.');
         setIsLoadingQuote(false);
         return;
       }
@@ -284,7 +297,7 @@ export default function Services() {
       setQuoteResult(result);
     } catch (error) {
       console.error('Quote generation failed:', error);
-      alert(`Failed to generate quote: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setQuoteError(`Failed to generate quote: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsLoadingQuote(false);
     }
@@ -315,8 +328,7 @@ export default function Services() {
 
   return (
     <div className="relative min-h-[100svh] w-full overflow-hidden bg-background text-foreground selection:bg-primary/20 selection:text-foreground">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.18),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.03),transparent_24%)]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.08),transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,hsl(var(--primary)/0.08),transparent_50%)]" />
 
       <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-6xl flex-col px-4 py-6 sm:p-6 lg:p-8">
         <div className="mb-4 flex items-center justify-between">
@@ -327,22 +339,17 @@ export default function Services() {
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back to Home
           </Link>
-          <div className="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.24em] text-primary">
+          <div className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
             Services Wizard
           </div>
         </div>
 
         <div className="grid flex-1 gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
-          <section className="relative overflow-hidden flex h-fit flex-col rounded-[24px] border border-border/80 bg-card/60 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.32)] sm:p-6 backdrop-blur-xl">
-            {/* Cyber aesthetic corner markers */}
-            <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary/45"></div>
-            <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-primary/45"></div>
-            <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-primary/45"></div>
-            <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary/45"></div>
+          <section className="relative overflow-hidden flex h-fit flex-col rounded-2xl border border-border bg-card p-4 sm:p-6">
 
             <div className="mb-4 space-y-3">
               <div className="space-y-1">
-                <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-primary/80">Get a Quote</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary/80">Get a Quote</p>
                 <h1 className="max-w-2xl text-2xl font-semibold tracking-tight sm:text-3xl">
                   Tell us what needs to be built.
                 </h1>
@@ -352,47 +359,41 @@ export default function Services() {
                 </p>
               </div>
 
-              <div className="rounded-xl border border-border/80 bg-background/50 p-3">
-                <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
+              <div className="rounded-xl border border-border bg-background/50 p-4">
+                <div className="mb-4 flex items-center justify-between text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
                   <span>Progress</span>
                   <span>Step {currentStep} of {steps.length}</span>
                 </div>
-                <div className="mb-3 h-1.5 rounded-full bg-muted">
+                <div className="relative flex items-start justify-between">
+                  <div className="absolute left-0 right-0 top-[13px] h-px bg-border" />
                   <div
-                    className="h-1.5 rounded-full bg-primary transition-all duration-300"
-                    style={{ width: `${(currentStep / steps.length) * 100}%` }}
+                    className="absolute left-0 top-[13px] h-px bg-primary transition-all duration-300"
+                    style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
                   />
-                </div>
-                <div className="grid gap-2 grid-cols-2 sm:grid-cols-4">
                   {steps.map((step) => {
                     const isActive = step.id === currentStep;
                     const isComplete = step.id < currentStep;
 
                     return (
-                      <div
-                        key={step.id}
-                        className={cn(
-                          'rounded-lg border px-2 py-2 text-left transition-colors',
-                          isActive
-                            ? 'border-primary/60 bg-primary/10'
-                            : isComplete
-                              ? 'border-primary/25 bg-primary/5'
-                              : 'border-border bg-card/40'
-                        )}
-                      >
-                        <div className="flex items-center gap-1.5">
-                          <div
-                            className={cn(
-                              'flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold',
-                              isActive || isComplete
-                                ? 'bg-primary text-primary-foreground'
-                                : 'bg-muted text-muted-foreground'
-                            )}
-                          >
-                            {isComplete ? <Check className="h-3 w-3" /> : step.id}
-                          </div>
-                          <span className="text-xs font-medium text-foreground">{step.label}</span>
+                      <div key={step.id} className="relative z-10 flex w-16 flex-col items-center gap-1.5 text-center">
+                        <div
+                          className={cn(
+                            'flex h-7 w-7 items-center justify-center rounded-full border text-[11px] font-semibold',
+                            isComplete || isActive
+                              ? 'border-primary bg-primary text-primary-foreground'
+                              : 'border-border bg-card text-muted-foreground'
+                          )}
+                        >
+                          {isComplete ? <Check className="h-3.5 w-3.5" /> : step.id}
                         </div>
+                        <span
+                          className={cn(
+                            'font-mono text-[9px] uppercase tracking-wider',
+                            isActive ? 'text-primary' : 'text-muted-foreground'
+                          )}
+                        >
+                          {step.label}
+                        </span>
                       </div>
                     );
                   })}
@@ -423,25 +424,17 @@ export default function Services() {
                       const isSelected = selectedProduct === card.id;
 
                       return (
-                        <motion.button
-                          whileHover={{ y: -4, scale: 1.01 }}
-                          whileTap={{ scale: 0.98 }}
+                        <button
                           key={card.id}
                           type="button"
                           onClick={() => chooseProduct(card.id)}
                           className={cn(
                             'relative flex min-h-[148px] flex-col rounded-xl border p-4 text-left transition-all duration-300',
                             isSelected
-                              ? 'border-primary/60 bg-primary/10 shadow-[0_18px_40px_rgba(14,165,233,0.1)]'
-                              : 'border-border bg-card/30 hover:border-primary/35 hover:bg-card/60'
+                              ? 'border-primary/70 bg-primary/10 ring-1 ring-primary/40'
+                              : 'border-border bg-card/30 hover:border-primary/35 hover:-translate-y-0.5'
                           )}
                         >
-                          <div 
-                            className={cn(
-                              "absolute inset-0 -z-10 rounded-xl opacity-0 transition-opacity duration-300 blur-lg",
-                              isSelected && "opacity-5 bg-primary"
-                            )}
-                          />
                           <div className="mb-3 flex items-start justify-between">
                             <div
                               className={cn(
@@ -466,11 +459,11 @@ export default function Services() {
                           </div>
                           <h3 className="mb-1 text-sm font-semibold tracking-wide">{card.title}</h3>
                           <p className="text-[11px] leading-relaxed text-muted-foreground">{card.description}</p>
-                          <div className="mt-auto pt-3 flex items-center justify-between text-[8px] font-mono text-muted-foreground/60 w-full">
-                            <span>SYS_DEV // 0{idx + 1}</span>
-                            <span className="uppercase tracking-[0.05em] text-primary/75">Select</span>
+                          <div className="mt-auto pt-3 flex items-center justify-between text-[8px] font-mono uppercase tracking-wider text-muted-foreground/60 w-full">
+                            <span>Option 0{idx + 1}</span>
+                            <span className={isSelected ? 'text-primary' : ''}>Select</span>
                           </div>
-                        </motion.button>
+                        </button>
                       );
                     })}
                   </div>
@@ -492,17 +485,15 @@ export default function Services() {
                       const isSelected = mobilePlatform === option.id;
 
                       return (
-                        <motion.button
-                          whileHover={{ y: -4, scale: 1.01 }}
-                          whileTap={{ scale: 0.98 }}
+                        <button
                           key={option.id}
                           type="button"
                           onClick={() => setMobilePlatform(option.id)}
                           className={cn(
                             'flex min-h-[120px] flex-col rounded-xl border p-4 text-left transition-all duration-300',
                             isSelected
-                              ? 'border-primary/60 bg-primary/10'
-                              : 'border-border bg-card/30 hover:border-primary/35'
+                              ? 'border-primary/70 bg-primary/10 ring-1 ring-primary/40'
+                              : 'border-border bg-card/30 hover:border-primary/35 hover:-translate-y-0.5'
                           )}
                         >
                           <div
@@ -521,7 +512,7 @@ export default function Services() {
                               ? 'Reach both ecosystems with one scoped quote.'
                               : `Target ${option.label} users first.`}
                           </p>
-                        </motion.button>
+                        </button>
                       );
                     })}
                   </div>
@@ -542,16 +533,15 @@ export default function Services() {
                       const isSelected = webFocus === option.id;
 
                       return (
-                        <motion.button
-                          whileHover={{ x: 4 }}
+                        <button
                           key={option.id}
                           type="button"
                           onClick={() => setWebFocus(option.id)}
                           className={cn(
                             'flex w-full items-start justify-between rounded-xl border p-4 text-left transition-all duration-300',
                             isSelected
-                              ? 'border-primary/60 bg-primary/10'
-                              : 'border-border bg-card/30 hover:border-primary/35'
+                              ? 'border-primary/70 bg-primary/10 ring-1 ring-primary/40'
+                              : 'border-border bg-card/30 hover:border-primary/35 hover:-translate-y-0.5'
                           )}
                         >
                           <div className="pr-4">
@@ -570,7 +560,7 @@ export default function Services() {
                           >
                             <Check className="h-3 w-3" />
                           </div>
-                        </motion.button>
+                        </button>
                       );
                     })}
                   </div>
@@ -592,17 +582,15 @@ export default function Services() {
                       const isSelected = systemPlatforms.includes(option.id);
 
                       return (
-                        <motion.button
-                          whileHover={{ y: -4, scale: 1.01 }}
-                          whileTap={{ scale: 0.98 }}
+                        <button
                           key={option.id}
                           type="button"
                           onClick={() => toggleSystemPlatform(option.id)}
                           className={cn(
                             'flex min-h-[120px] flex-col rounded-xl border p-4 text-left transition-all duration-300',
                             isSelected
-                              ? 'border-primary/60 bg-primary/10'
-                              : 'border-border bg-card/30 hover:border-primary/35'
+                              ? 'border-primary/70 bg-primary/10 ring-1 ring-primary/40'
+                              : 'border-border bg-card/30 hover:border-primary/35 hover:-translate-y-0.5'
                           )}
                         >
                           <div className="mb-3 flex items-start justify-between">
@@ -631,7 +619,7 @@ export default function Services() {
                           <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
                             Include {option.label} in the delivery scope.
                           </p>
-                        </motion.button>
+                        </button>
                       );
                     })}
                   </div>
@@ -751,10 +739,7 @@ export default function Services() {
                 type="button"
                 onClick={goBack}
                 disabled={currentStep === 1}
-                className={cn(
-                  'inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-xs font-medium text-foreground transition-colors sm:px-3',
-                  currentStep === 1 && 'cursor-not-allowed opacity-45'
-                )}
+                className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-transparent px-4 py-2 text-xs font-medium text-foreground transition-colors hover:border-primary/40 disabled:cursor-not-allowed disabled:opacity-45"
               >
                 <ArrowLeft className="h-3 w-3" />
                 Back
@@ -762,17 +747,10 @@ export default function Services() {
 
               <div className="flex items-center gap-2">
                 {currentStep < 4 ? (
-                  <ShinyButton
-                    onClick={goNext}
-                    disabled={!canMoveForward}
-                    className={cn(
-                      'px-4 py-2 text-xs justify-center',
-                      !canMoveForward && 'cursor-not-allowed opacity-45 hover:shadow-none'
-                    )}
-                  >
+                  <Button onClick={goNext} disabled={!canMoveForward}>
                     Continue
-                    <ArrowRight className="h-3 w-3" />
-                  </ShinyButton>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Button>
                 ) : (
                   <div className="space-y-2">
                     {quoteResult ? (
@@ -781,25 +759,16 @@ export default function Services() {
                         Quoted
                       </div>
                     ) : (
-                      <ShinyButton
-                        onClick={getQuote}
-                        disabled={isLoadingQuote || !selectedCountry}
-                        className={cn(
-                          'justify-center px-4 py-2 text-xs',
-                          (!selectedCountry || isLoadingQuote) && 'cursor-not-allowed opacity-45 hover:shadow-none'
-                        )}
-                      >
+                      <Button onClick={getQuote} disabled={!selectedCountry || isLoadingQuote}>
                         {isLoadingQuote ? (
-                          <>
-                            <span className="animate-pulse">Generating...</span>
-                          </>
+                          <span className="animate-pulse">Analyzing scope…</span>
                         ) : (
                           <>
                             Get Quote
-                            <ArrowRight className="h-3 w-3" />
+                            <ArrowRight className="h-3.5 w-3.5" />
                           </>
                         )}
-                      </ShinyButton>
+                      </Button>
                     )}
                   </div>
                 )}
@@ -807,15 +776,9 @@ export default function Services() {
             </div>
           </section>
 
-          <aside className="relative overflow-hidden h-fit space-y-3 rounded-[20px] border border-border/80 bg-card/60 p-4 lg:sticky lg:top-8 backdrop-blur-xl hover:border-primary/20 transition-all duration-350">
-            {/* Cyber aesthetic corner markers */}
-            <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary/40"></div>
-            <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-primary/40"></div>
-            <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-primary/40"></div>
-            <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary/40"></div>
-
+          <aside className="relative overflow-hidden h-fit space-y-3 rounded-2xl border border-border bg-card p-4 lg:sticky lg:top-8 transition-colors duration-300">
             <div className="space-y-1">
-              <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-primary/80">Current Step</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Current Step</p>
               <h2 className="text-lg font-semibold tracking-tight">{steps[currentStep - 1].label}</h2>
               <p className="text-xs leading-5 text-muted-foreground">
                 A guided quote request with one service per submission.
@@ -823,7 +786,7 @@ export default function Services() {
             </div>
 
             <div className="rounded-xl border border-border bg-background/50 p-3">
-              <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.24em] text-muted-foreground">
+              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
                 What you have so far
               </p>
               <div className="space-y-1.5">
@@ -846,7 +809,7 @@ export default function Services() {
             </div>
 
             <div className="rounded-xl border border-border bg-background/50 p-3">
-              <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.24em] text-muted-foreground">
+              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
                 Step guidance
               </p>
               <ul className="space-y-1 text-xs leading-5 text-muted-foreground">
@@ -856,10 +819,25 @@ export default function Services() {
               </ul>
             </div>
 
+            {isLoadingQuote && (
+              <div className="rounded-xl border border-border bg-background/50 p-3">
+                <p className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
+                  Intelligence output
+                </p>
+                <span className="animate-pulse text-xs text-primary">Analyzing scope…</span>
+              </div>
+            )}
+
+            {quoteError && (
+              <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-xs leading-relaxed text-destructive">
+                {quoteError}
+              </div>
+            )}
+
             {quoteResult && (
               <div className="rounded-xl border border-primary/40 bg-primary/10 p-3">
-                <p className="mb-1.5 text-[10px] font-medium uppercase tracking-[0.24em] text-primary/80">
-                  Your Quote
+                <p className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.24em] text-primary/80">
+                  Intelligence output
                 </p>
                 <div className="whitespace-pre-wrap text-xs leading-relaxed text-foreground/90">
                   {quoteResult}
