@@ -1,6 +1,13 @@
-import type { ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { motion, useReducedMotion } from 'motion/react';
+import {
+  motion,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from 'motion/react';
 import { ArrowRight, Globe, Laptop, Smartphone } from 'lucide-react';
 import whiteLogo from './assets/white.png';
 import Services from './pages/Services';
@@ -11,18 +18,21 @@ const capabilities = [
     id: 'mobile',
     title: 'Mobile',
     icon: Smartphone,
+    depth: 0.6,
     line: "Field tools, customer touchpoints, and internal apps in your users' pockets — native or cross-platform.",
   },
   {
     id: 'web',
     title: 'Web Applications',
     icon: Globe,
+    depth: 1,
     line: 'Dashboards, client portals, and products that make the browser the most useful tab your users open.',
   },
   {
     id: 'system',
     title: 'Desktop Systems',
     icon: Laptop,
+    depth: 1.4,
     line: 'Focused operational software for teams whose work happens outside the browser.',
   },
 ] as const;
@@ -47,90 +57,185 @@ function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }
   );
 }
 
-function Home() {
+/**
+ * Scroll-linked depth layer: the wrapped content drifts at its own speed
+ * (proportional to `depth`) while crossing the viewport, and fades in once
+ * on entry. Scroll-linked y lives on the outer motion.div, the one-shot
+ * entrance on the inner one, so the transforms never fight.
+ */
+function ParallaxReveal({
+  depth,
+  className,
+  children,
+}: {
+  depth: number;
+  className?: string;
+  children: ReactNode;
+}) {
+  const reduceMotion = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const y = useTransform(scrollYProgress, [0, 1], [48 * depth, -16 * depth]);
+  const smoothY = useSpring(y, { stiffness: 120, damping: 30, restDelta: 0.001 });
+
   return (
-    <div className="relative min-h-[100svh] overflow-hidden bg-background text-foreground">
-      {/* Single ambient background: one radial glow + one dot grid, CSS only */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,hsl(var(--primary)/0.10),transparent_55%)]" />
-      <div className="pointer-events-none absolute inset-0 opacity-40 [background-image:radial-gradient(hsl(var(--foreground)/0.07)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]" />
+    <div ref={ref} className={className}>
+      <motion.div style={reduceMotion ? undefined : { y: smoothY }}>
+        <motion.div
+          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-10% 0px' }}
+          transition={{ duration: 0.45, ease: 'easeOut' }}
+        >
+          {children}
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+}
 
-      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col px-6">
-        <header className="flex items-center justify-between py-6">
-          <div className="flex items-center gap-2.5">
-            <img
-              src={whiteLogo}
-              alt="Foundation Stone Algorithms logo"
-              className="h-8 w-8 object-contain"
-            />
-            <span className="text-sm font-semibold tracking-tight">Foundation Stone Algorithms</span>
-          </div>
-          <Link to="/services">
-            <Button size="sm">Start a project</Button>
-          </Link>
-        </header>
+function ScrollProgressRail() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
 
-        <section className="flex flex-col items-center gap-6 py-20 text-center sm:py-28">
-          <Reveal>
-            <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
-              Intelligent Systems Studio
-            </span>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl">
-              We build intelligent systems that solve hard problems.
-            </h1>
-          </Reveal>
-          <Reveal delay={0.16}>
-            <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-              We engineer custom software systems across mobile, web, and desktop — powered by
-              intelligent agents, optimized execution pipelines, and bespoke client customizations.
-            </p>
-          </Reveal>
-          <Reveal delay={0.24}>
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Link to="/services">
-                <Button size="lg">
-                  Start a project request
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-              <a href="#capabilities">
-                <Button variant="outline" size="lg">
-                  See capabilities
-                </Button>
-              </a>
-            </div>
-          </Reveal>
+  return <motion.div className="fixed inset-x-0 top-0 z-50 h-px origin-left bg-primary/60" style={{ scaleX }} />;
+}
+
+function Nav() {
+  const [scrolled, setScrolled] = useState(false);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, 'change', (current) => {
+    setScrolled(current > 8);
+  });
+
+  return (
+    <header
+      className={
+        'sticky top-0 z-40 flex items-center justify-between px-6 py-4 transition-colors duration-300 ' +
+        (scrolled ? 'border-b border-border bg-background/85 backdrop-blur-md' : 'border-b border-transparent')
+      }
+    >
+      <div className="flex items-center gap-2.5">
+        <img src={whiteLogo} alt="Foundation Stone Algorithms logo" className="h-8 w-8 object-contain" />
+        <span className="text-sm font-semibold tracking-tight">Foundation Stone Algorithms</span>
+      </div>
+      <Link to="/services">
+        <Button size="sm">Start a project</Button>
+      </Link>
+    </header>
+  );
+}
+
+function Home() {
+  const reduceMotion = useReducedMotion();
+
+  // Global background planes: glow drifts down-scale, grid counter-drifts up and fades.
+  const { scrollYProgress } = useScroll();
+  const glowY = useTransform(scrollYProgress, [0, 1], [0, 220]);
+  const glowScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
+  const gridY = useTransform(scrollYProgress, [0, 1], [0, -140]);
+  const gridOpacity = useTransform(scrollYProgress, [0, 1], [0.4, 0.12]);
+
+  // Hero exits faster than the scroll with a depth-of-field blur ramp.
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: heroProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+  const heroY = useTransform(heroProgress, [0, 1], [0, -80]);
+  const heroOpacity = useTransform(heroProgress, [0, 0.9], [1, 0]);
+  const heroFilter = useTransform(heroProgress, [0, 0.8], ['blur(0px)', 'blur(6px)']);
+
+  // Statement line slides horizontally as it crosses the viewport.
+  const statementRef = useRef<HTMLParagraphElement>(null);
+  const { scrollYProgress: statementProgress } = useScroll({
+    target: statementRef,
+    offset: ['start end', 'end start'],
+  });
+  const statementX = useTransform(statementProgress, [0, 1], [40, -40]);
+  const statementOpacity = useTransform(statementProgress, [0, 0.4, 0.75, 1], [0.2, 1, 1, 0.3]);
+
+  return (
+    <div className="relative min-h-[100svh] overflow-x-hidden bg-background text-foreground">
+      <ScrollProgressRail />
+
+      {/* Layered ambient background: two depth planes, CSS + scroll-linked only */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,hsl(var(--primary)/0.10),transparent_55%)]"
+        style={reduceMotion ? undefined : { y: glowY, scale: glowScale }}
+      />
+      <motion.div
+        className="pointer-events-none absolute inset-0 opacity-40 [background-image:radial-gradient(hsl(var(--foreground)/0.07)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
+        style={reduceMotion ? undefined : { y: gridY, opacity: gridOpacity }}
+      />
+
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col">
+        <Nav />
+
+        <section ref={heroRef} className="flex min-h-[92svh] flex-col items-center justify-center gap-6 px-6 py-20 text-center">
+          <motion.div
+            style={reduceMotion ? undefined : { y: heroY, opacity: heroOpacity, filter: heroFilter }}
+            className="flex flex-col items-center gap-6"
+          >
+            <Reveal>
+              <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
+                Intelligent Systems Studio
+              </span>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl">
+                We build intelligent systems that solve hard problems.
+              </h1>
+            </Reveal>
+            <Reveal delay={0.16}>
+              <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+                We engineer custom software systems across mobile, web, and desktop — powered by
+                intelligent agents, optimized execution pipelines, and bespoke client customizations.
+              </p>
+            </Reveal>
+            <Reveal delay={0.24}>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <Link to="/services">
+                  <Button size="lg">
+                    Start a project request
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <a href="#capabilities">
+                  <Button variant="outline" size="lg">
+                    See capabilities
+                  </Button>
+                </a>
+              </div>
+            </Reveal>
+          </motion.div>
         </section>
 
-        <Reveal>
+        <ParallaxReveal depth={0.25} className="px-6">
           <div className="grid grid-cols-3 divide-x divide-border border-y border-border py-6 text-center">
             {trustMetrics.map((metric) => (
               <div key={metric.label} className="px-2">
-                <p className="font-mono text-xl font-semibold text-foreground sm:text-2xl">
-                  {metric.value}
-                </p>
+                <p className="font-mono text-xl font-semibold text-foreground sm:text-2xl">{metric.value}</p>
                 <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                   {metric.label}
                 </p>
               </div>
             ))}
           </div>
-        </Reveal>
+        </ParallaxReveal>
 
-        <section id="capabilities" className="scroll-mt-16 py-20">
+        <section id="capabilities" className="scroll-mt-16 px-6 py-28">
           <Reveal>
-            <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
-              Capabilities
-            </span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-primary">Capabilities</span>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">What we build</h2>
           </Reveal>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {capabilities.map((capability, index) => {
+            {capabilities.map((capability) => {
               const Icon = capability.icon;
 
               return (
-                <Reveal key={capability.id} delay={index * 0.08}>
+                <ParallaxReveal key={capability.id} depth={capability.depth} className="h-full">
                   <div className="group flex h-full flex-col rounded-2xl border border-border bg-card p-6 transition-colors hover:border-primary/40">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background text-primary">
                       <Icon className="h-5 w-5" />
@@ -147,19 +252,21 @@ function Home() {
                       <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                     </Link>
                   </div>
-                </Reveal>
+                </ParallaxReveal>
               );
             })}
           </div>
         </section>
 
-        <Reveal>
-          <p className="border-t border-border py-16 text-center font-mono text-sm uppercase tracking-[0.2em] text-muted-foreground">
-            Intelligent systems, engineered for your problem.
-          </p>
-        </Reveal>
+        <motion.p
+          ref={statementRef}
+          className="border-t border-border px-6 py-16 text-center font-mono text-sm uppercase tracking-[0.2em] text-muted-foreground"
+          style={reduceMotion ? undefined : { x: statementX, opacity: statementOpacity }}
+        >
+          Intelligent systems, engineered for your problem.
+        </motion.p>
 
-        <footer className="py-8 text-center text-xs text-muted-foreground">
+        <footer className="px-6 py-8 text-center text-xs text-muted-foreground">
           {new Date().getFullYear()} Foundation Stone Algorithms. All rights reserved.
         </footer>
       </div>
