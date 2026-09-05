@@ -333,7 +333,13 @@ export default function Services() {
         </div>
 
         <div className="grid flex-1 gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
-          <section className="flex h-fit flex-col rounded-[20px] border border-border/80 bg-card/88 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.32)] sm:p-5">
+          <section className="relative overflow-hidden flex h-fit flex-col rounded-[24px] border border-border/80 bg-card/60 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.32)] sm:p-6 backdrop-blur-xl">
+            {/* Cyber aesthetic corner markers */}
+            <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary/45"></div>
+            <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-primary/45"></div>
+            <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-primary/45"></div>
+            <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary/45"></div>
+
             <div className="mb-4 space-y-3">
               <div className="space-y-1">
                 <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-primary/80">Get a Quote</p>
@@ -346,7 +352,7 @@ export default function Services() {
                 </p>
               </div>
 
-              <div className="rounded-xl border border-border/80 bg-background/70 p-3">
+              <div className="rounded-xl border border-border/80 bg-background/50 p-3">
                 <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
                   <span>Progress</span>
                   <span>Step {currentStep} of {steps.length}</span>
@@ -370,8 +376,8 @@ export default function Services() {
                           isActive
                             ? 'border-primary/60 bg-primary/10'
                             : isComplete
-                              ? 'border-primary/20 bg-primary/5'
-                              : 'border-border bg-card'
+                              ? 'border-primary/25 bg-primary/5'
+                              : 'border-border bg-card/40'
                         )}
                       >
                         <div className="flex items-center gap-1.5">
@@ -404,7 +410,7 @@ export default function Services() {
               {currentStep === 1 && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <h2 className="text-xl font-semibold tracking-tight">Choose one service</h2>
+                    <h2 className="text-lg font-semibold tracking-tight">Choose one service</h2>
                     <p className="text-xs leading-5 text-muted-foreground">
                       Start with the primary product you want quoted. You can keep the request focused
                       and specific.
@@ -412,36 +418,44 @@ export default function Services() {
                   </div>
 
                   <div className="grid gap-3 md:grid-cols-3">
-                    {productCards.map((card) => {
+                    {productCards.map((card, idx) => {
                       const Icon = card.icon;
                       const isSelected = selectedProduct === card.id;
 
                       return (
-                        <button
+                        <motion.button
+                          whileHover={{ y: -4, scale: 1.01 }}
+                          whileTap={{ scale: 0.98 }}
                           key={card.id}
                           type="button"
                           onClick={() => chooseProduct(card.id)}
                           className={cn(
-                            'relative flex min-h-[140px] flex-col rounded-xl border p-4 text-left transition-all duration-200',
+                            'relative flex min-h-[148px] flex-col rounded-xl border p-4 text-left transition-all duration-300',
                             isSelected
-                              ? 'border-primary/60 bg-primary/10 shadow-[0_18px_40px_rgba(14,165,233,0.12)]'
-                              : 'border-border bg-background/70 hover:border-primary/35 hover:bg-background'
+                              ? 'border-primary/60 bg-primary/10 shadow-[0_18px_40px_rgba(14,165,233,0.1)]'
+                              : 'border-border bg-card/30 hover:border-primary/35 hover:bg-card/60'
                           )}
                         >
+                          <div 
+                            className={cn(
+                              "absolute inset-0 -z-10 rounded-xl opacity-0 transition-opacity duration-300 blur-lg",
+                              isSelected && "opacity-5 bg-primary"
+                            )}
+                          />
                           <div className="mb-3 flex items-start justify-between">
                             <div
                               className={cn(
-                                'flex h-8 w-8 items-center justify-center rounded-lg border',
+                                'flex h-8 w-8 items-center justify-center rounded-lg border transition-colors',
                                 isSelected
                                   ? 'border-primary/30 bg-primary text-primary-foreground'
-                                  : 'border-border bg-card text-primary'
+                                  : 'border-border bg-background text-primary'
                               )}
                             >
                               <Icon className="h-4 w-4" />
                             </div>
                             <div
                               className={cn(
-                                'flex h-5 w-5 items-center justify-center rounded-full border',
+                                'flex h-5 w-5 items-center justify-center rounded-full border transition-colors',
                                 isSelected
                                   ? 'border-primary bg-primary text-primary-foreground'
                                   : 'border-border text-transparent'
@@ -450,12 +464,13 @@ export default function Services() {
                               <Check className="h-3 w-3" />
                             </div>
                           </div>
-                          <h3 className="mb-1 text-base font-semibold">{card.title}</h3>
-                          <p className="text-xs leading-5 text-muted-foreground">{card.description}</p>
-                          <div className="mt-auto pt-3 text-[10px] uppercase tracking-[0.22em] text-primary/75">
-                            Select service
+                          <h3 className="mb-1 text-sm font-semibold tracking-wide">{card.title}</h3>
+                          <p className="text-[11px] leading-relaxed text-muted-foreground">{card.description}</p>
+                          <div className="mt-auto pt-3 flex items-center justify-between text-[8px] font-mono text-muted-foreground/60 w-full">
+                            <span>SYS_DEV // 0{idx + 1}</span>
+                            <span className="uppercase tracking-[0.05em] text-primary/75">Select</span>
                           </div>
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </div>
@@ -465,7 +480,7 @@ export default function Services() {
               {currentStep === 2 && selectedProduct === 'mobile' && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <h2 className="text-xl font-semibold tracking-tight">Choose a mobile platform</h2>
+                    <h2 className="text-lg font-semibold tracking-tight">Choose a mobile platform</h2>
                     <p className="text-xs leading-5 text-muted-foreground">
                       Pick the device target for the app quote.
                     </p>
@@ -477,34 +492,36 @@ export default function Services() {
                       const isSelected = mobilePlatform === option.id;
 
                       return (
-                        <button
+                        <motion.button
+                          whileHover={{ y: -4, scale: 1.01 }}
+                          whileTap={{ scale: 0.98 }}
                           key={option.id}
                           type="button"
                           onClick={() => setMobilePlatform(option.id)}
                           className={cn(
-                            'flex min-h-[120px] flex-col rounded-xl border p-4 text-left transition-all',
+                            'flex min-h-[120px] flex-col rounded-xl border p-4 text-left transition-all duration-300',
                             isSelected
                               ? 'border-primary/60 bg-primary/10'
-                              : 'border-border bg-background/70 hover:border-primary/35'
+                              : 'border-border bg-card/30 hover:border-primary/35'
                           )}
                         >
                           <div
                             className={cn(
-                              'mb-3 flex h-8 w-8 items-center justify-center rounded-lg border',
+                              'mb-3 flex h-8 w-8 items-center justify-center rounded-lg border transition-colors',
                               isSelected
                                 ? 'border-primary/30 bg-primary text-primary-foreground'
-                                : 'border-border bg-card text-primary'
+                                : 'border-border bg-background text-primary'
                             )}
                           >
                             <Icon className="h-4 w-4" />
                           </div>
-                          <h3 className="text-base font-semibold">{option.label}</h3>
-                          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                          <h3 className="text-sm font-semibold tracking-wide">{option.label}</h3>
+                          <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
                             {option.id === 'both'
                               ? 'Reach both ecosystems with one scoped quote.'
                               : `Target ${option.label} users first.`}
                           </p>
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </div>
@@ -514,7 +531,7 @@ export default function Services() {
               {currentStep === 2 && selectedProduct === 'web' && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <h2 className="text-xl font-semibold tracking-tight">Define the web product</h2>
+                    <h2 className="text-lg font-semibold tracking-tight">Define the web product</h2>
                     <p className="text-xs leading-5 text-muted-foreground">
                       Choose the closest shape for the browser experience you want built.
                     </p>
@@ -525,26 +542,27 @@ export default function Services() {
                       const isSelected = webFocus === option.id;
 
                       return (
-                        <button
+                        <motion.button
+                          whileHover={{ x: 4 }}
                           key={option.id}
                           type="button"
                           onClick={() => setWebFocus(option.id)}
                           className={cn(
-                            'flex w-full items-start justify-between rounded-xl border p-4 text-left transition-all',
+                            'flex w-full items-start justify-between rounded-xl border p-4 text-left transition-all duration-300',
                             isSelected
                               ? 'border-primary/60 bg-primary/10'
-                              : 'border-border bg-background/70 hover:border-primary/35'
+                              : 'border-border bg-card/30 hover:border-primary/35'
                           )}
                         >
                           <div className="pr-4">
-                            <h3 className="text-base font-semibold">{option.label}</h3>
-                            <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                            <h3 className="text-sm font-semibold tracking-wide">{option.label}</h3>
+                            <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
                               {option.description}
                             </p>
                           </div>
                           <div
                             className={cn(
-                              'mt-1 flex h-5 w-5 items-center justify-center rounded-full border',
+                              'mt-1 flex h-5 w-5 items-center justify-center rounded-full border transition-colors',
                               isSelected
                                 ? 'border-primary bg-primary text-primary-foreground'
                                 : 'border-border text-transparent'
@@ -552,7 +570,7 @@ export default function Services() {
                           >
                             <Check className="h-3 w-3" />
                           </div>
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </div>
@@ -562,7 +580,7 @@ export default function Services() {
               {currentStep === 2 && selectedProduct === 'system' && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <h2 className="text-xl font-semibold tracking-tight">Choose desktop targets</h2>
+                    <h2 className="text-lg font-semibold tracking-tight">Choose desktop targets</h2>
                     <p className="text-xs leading-5 text-muted-foreground">
                       Select one or more operating systems for the software quote.
                     </p>
@@ -574,31 +592,33 @@ export default function Services() {
                       const isSelected = systemPlatforms.includes(option.id);
 
                       return (
-                        <button
+                        <motion.button
+                          whileHover={{ y: -4, scale: 1.01 }}
+                          whileTap={{ scale: 0.98 }}
                           key={option.id}
                           type="button"
                           onClick={() => toggleSystemPlatform(option.id)}
                           className={cn(
-                            'flex min-h-[120px] flex-col rounded-xl border p-4 text-left transition-all',
+                            'flex min-h-[120px] flex-col rounded-xl border p-4 text-left transition-all duration-300',
                             isSelected
                               ? 'border-primary/60 bg-primary/10'
-                              : 'border-border bg-background/70 hover:border-primary/35'
+                              : 'border-border bg-card/30 hover:border-primary/35'
                           )}
                         >
                           <div className="mb-3 flex items-start justify-between">
                             <div
                               className={cn(
-                                'flex h-8 w-8 items-center justify-center rounded-lg border',
+                                'flex h-8 w-8 items-center justify-center rounded-lg border transition-colors',
                                 isSelected
                                   ? 'border-primary/30 bg-primary text-primary-foreground'
-                                  : 'border-border bg-card text-primary'
+                                  : 'border-border bg-background text-primary'
                               )}
                             >
                               <Icon className="h-4 w-4" />
                             </div>
                             <div
                               className={cn(
-                                'flex h-5 w-5 items-center justify-center rounded-full border',
+                                'flex h-5 w-5 items-center justify-center rounded-full border transition-colors',
                                 isSelected
                                   ? 'border-primary bg-primary text-primary-foreground'
                                   : 'border-border text-transparent'
@@ -607,11 +627,11 @@ export default function Services() {
                               <Check className="h-3 w-3" />
                             </div>
                           </div>
-                          <h3 className="text-base font-semibold">{option.label}</h3>
-                          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                          <h3 className="text-sm font-semibold tracking-wide">{option.label}</h3>
+                          <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
                             Include {option.label} in the delivery scope.
                           </p>
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </div>
@@ -621,13 +641,13 @@ export default function Services() {
               {currentStep === 3 && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <h2 className="text-xl font-semibold tracking-tight">Describe the project</h2>
+                    <h2 className="text-lg font-semibold tracking-tight">Describe the project</h2>
                     <p className="text-xs leading-5 text-muted-foreground">
                       Share the core problem, intended users, and the most important outcomes.
                     </p>
                   </div>
 
-                  <div className="rounded-xl border border-border bg-background/70 p-4">
+                  <div className="rounded-xl border border-border bg-background/50 p-4">
                     <div className="grid gap-3 sm:grid-cols-[40px_minmax(0,1fr)] sm:items-start">
                       <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-card text-primary">
                         <MessageSquareText className="h-4 w-4" />
@@ -635,7 +655,7 @@ export default function Services() {
 
                       <div className="min-w-0 space-y-2 text-left">
                         <div className="space-y-0.5">
-                          <h3 className="text-base font-semibold">Project brief</h3>
+                          <h3 className="text-sm font-semibold">Project brief</h3>
                           <p className="text-xs text-muted-foreground">
                             Example: customer onboarding app, internal dashboard, or field operations desktop tool.
                           </p>
@@ -645,7 +665,7 @@ export default function Services() {
                           value={description}
                           onChange={(event) => setDescription(event.target.value)}
                           placeholder="Describe what should be built, who will use it, and any must-have workflows."
-                          className="min-h-[140px] w-full resize-none rounded-xl border border-border bg-card px-3 py-3 text-sm leading-6 outline-none transition-all placeholder:text-muted-foreground/55 focus:border-primary focus:ring-2 focus:ring-primary/10"
+                          className="min-h-[140px] w-full resize-none rounded-xl border border-border bg-card/60 px-3 py-3 text-sm leading-6 outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                       </div>
                     </div>
@@ -656,13 +676,13 @@ export default function Services() {
               {currentStep === 4 && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <h2 className="text-xl font-semibold tracking-tight">Review your request</h2>
+                    <h2 className="text-lg font-semibold tracking-tight">Review your request</h2>
                     <p className="text-xs leading-5 text-muted-foreground">
                       Check the service scope before sending the quote request.
                     </p>
                   </div>
 
-                  <div className="rounded-xl border border-border bg-background/70 p-3">
+                  <div className="rounded-xl border border-border bg-background/50 p-3">
                     <p className="mb-1.5 flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.24em] text-muted-foreground">
                       Your Location 
                       {isLoadingLocation ? (
@@ -673,14 +693,14 @@ export default function Services() {
                         <span className="text-green-500">(Verified)</span>
                       )}
                     </p>
-                    <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs">
+                    <div className="flex items-center gap-2 rounded-lg border border-border bg-card/60 px-3 py-2 text-xs">
                       <Globe className="h-3 w-3 text-primary" />
                       {selectedCountry?.label} ({selectedCountry?.currency})
                     </div>
                   </div>
 
                   <div className="grid gap-3 lg:grid-cols-[0.95fr_1.05fr]">
-                    <div className="rounded-xl border border-border bg-background/70 p-4">
+                    <div className="rounded-xl border border-border bg-background/50 p-4">
                       <div className="mb-3 flex items-center gap-2">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-card text-primary">
                           {selectedProduct === 'mobile' && <Smartphone className="h-4 w-4" />}
@@ -688,7 +708,7 @@ export default function Services() {
                           {selectedProduct === 'system' && <Laptop className="h-4 w-4" />}
                         </div>
                         <div>
-                          <h3 className="text-base font-semibold">{selectedProductCard?.title}</h3>
+                          <h3 className="text-sm font-semibold">{selectedProductCard?.title}</h3>
                           <p className="text-[10px] text-muted-foreground">Selected service</p>
                         </div>
                       </div>
@@ -697,7 +717,7 @@ export default function Services() {
                         {selectionSummary.map((item) => (
                           <div
                             key={item}
-                            className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs text-foreground/85"
+                            className="flex items-center gap-2 rounded-lg border border-border bg-card/60 px-3 py-2 text-xs text-foreground/85"
                           >
                             <Check className="h-3 w-3 text-primary" />
                             {item}
@@ -706,18 +726,18 @@ export default function Services() {
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-border bg-background/70 p-4">
+                    <div className="rounded-xl border border-border bg-background/50 p-4">
                       <div className="mb-3 flex items-center gap-2">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-card text-primary">
                           <PackageCheck className="h-4 w-4" />
                         </div>
                         <div>
-                          <h3 className="text-base font-semibold">Project details</h3>
+                          <h3 className="text-sm font-semibold">Project details</h3>
                           <p className="text-[10px] text-muted-foreground">Request summary</p>
                         </div>
                       </div>
 
-                      <div className="rounded-lg border border-border bg-card p-3 text-xs leading-6 text-foreground/85">
+                      <div className="rounded-lg border border-border bg-card/60 p-3 text-xs leading-6 text-foreground/85">
                         {description.trim()}
                       </div>
                     </div>
@@ -787,7 +807,13 @@ export default function Services() {
             </div>
           </section>
 
-          <aside className="h-fit space-y-3 rounded-[20px] border border-border/80 bg-card/88 p-4 lg:sticky lg:top-8">
+          <aside className="relative overflow-hidden h-fit space-y-3 rounded-[20px] border border-border/80 bg-card/60 p-4 lg:sticky lg:top-8 backdrop-blur-xl hover:border-primary/20 transition-all duration-350">
+            {/* Cyber aesthetic corner markers */}
+            <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary/40"></div>
+            <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-primary/40"></div>
+            <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-primary/40"></div>
+            <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary/40"></div>
+
             <div className="space-y-1">
               <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-primary/80">Current Step</p>
               <h2 className="text-lg font-semibold tracking-tight">{steps[currentStep - 1].label}</h2>
@@ -796,7 +822,7 @@ export default function Services() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-border bg-background/70 p-3">
+            <div className="rounded-xl border border-border bg-background/50 p-3">
               <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.24em] text-muted-foreground">
                 What you have so far
               </p>
@@ -805,7 +831,7 @@ export default function Services() {
                   selectionSummary.map((item) => (
                     <div
                       key={item}
-                      className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-2 text-xs text-foreground/85"
+                      className="flex items-center gap-1.5 rounded-lg border border-border bg-card/60 px-2.5 py-2 text-xs text-foreground/85"
                     >
                       <Check className="h-3 w-3 text-primary" />
                       {item}
@@ -819,7 +845,7 @@ export default function Services() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-background/70 p-3">
+            <div className="rounded-xl border border-border bg-background/50 p-3">
               <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.24em] text-muted-foreground">
                 Step guidance
               </p>
