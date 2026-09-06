@@ -95,10 +95,16 @@ function ParallaxReveal({
 }
 
 function ScrollProgressRail() {
+  const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
 
-  return <motion.div className="fixed inset-x-0 top-0 z-50 h-px origin-left bg-primary/60" style={{ scaleX }} />;
+  return (
+    <motion.div
+      className="fixed inset-x-0 top-0 z-50 h-px origin-left bg-primary/60"
+      style={reduceMotion ? undefined : { scaleX }}
+    />
+  );
 }
 
 function Nav() {
@@ -116,13 +122,15 @@ function Nav() {
         (scrolled ? 'border-b border-border bg-background/85 backdrop-blur-md' : 'border-b border-transparent')
       }
     >
-      <div className="flex items-center gap-2.5">
-        <img src={whiteLogo} alt="Foundation Stone Algorithms logo" className="h-8 w-8 object-contain" />
-        <span className="text-sm font-semibold tracking-tight">Foundation Stone Algorithms</span>
+      <div className="mx-auto flex w-full max-w-5xl items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <img src={whiteLogo} alt="Foundation Stone Algorithms logo" className="h-8 w-8 object-contain" />
+          <span className="text-sm font-semibold tracking-tight">Foundation Stone Algorithms</span>
+        </div>
+        <Link to="/services">
+          <Button size="sm">Start a project</Button>
+        </Link>
       </div>
-      <Link to="/services">
-        <Button size="sm">Start a project</Button>
-      </Link>
     </header>
   );
 }
@@ -157,22 +165,25 @@ function Home() {
   const statementOpacity = useTransform(statementProgress, [0, 0.4, 0.75, 1], [0.2, 1, 1, 0.3]);
 
   return (
-    <div className="relative min-h-[100svh] overflow-x-hidden bg-background text-foreground">
+    <div className="relative min-h-[100svh] overflow-x-clip bg-background text-foreground">
       <ScrollProgressRail />
 
-      {/* Layered ambient background: two depth planes, CSS + scroll-linked only */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,hsl(var(--primary)/0.10),transparent_55%)]"
-        style={reduceMotion ? undefined : { y: glowY, scale: glowScale }}
-      />
-      <motion.div
-        className="pointer-events-none absolute inset-0 opacity-40 [background-image:radial-gradient(hsl(var(--foreground)/0.07)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
-        style={reduceMotion ? undefined : { y: gridY, opacity: gridOpacity }}
-      />
+      {/* Layered ambient background: two depth planes, clipped to their own layer so the
+          scroll-linked glow/grid can never add phantom scrollable overflow to the page */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        <motion.div
+          className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,hsl(var(--primary)/0.10),transparent_55%)]"
+          style={reduceMotion ? undefined : { y: glowY, scale: glowScale }}
+        />
+        <motion.div
+          className="absolute inset-0 opacity-40 [background-image:radial-gradient(hsl(var(--foreground)/0.07)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
+          style={reduceMotion ? undefined : { y: gridY, opacity: gridOpacity }}
+        />
+      </div>
+
+      <Nav />
 
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col">
-        <Nav />
-
         <section ref={heroRef} className="flex min-h-[92svh] flex-col items-center justify-center gap-6 px-6 py-20 text-center">
           <motion.div
             style={reduceMotion ? undefined : { y: heroY, opacity: heroOpacity, filter: heroFilter }}

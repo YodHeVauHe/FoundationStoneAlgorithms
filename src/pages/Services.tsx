@@ -211,11 +211,13 @@ export default function Services() {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
+    // Guard: don't clobber mid-flow state when history navigation restores a ?type= URL
+    if (currentStep !== 1) return;
     const type = searchParams.get('type');
     if (type === 'mobile' || type === 'web' || type === 'system') {
       setSelectedProduct(type);
     }
-  }, [searchParams]);
+  }, [searchParams, currentStep]);
 
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
   const [quoteResult, setQuoteResult] = useState<string | null>(null);
@@ -327,7 +329,7 @@ export default function Services() {
   };
 
   return (
-    <div className="relative min-h-[100svh] w-full overflow-hidden bg-background text-foreground selection:bg-primary/20 selection:text-foreground">
+    <div className="relative min-h-[100svh] w-full overflow-x-clip bg-background text-foreground selection:bg-primary/20 selection:text-foreground">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,hsl(var(--primary)/0.08),transparent_50%)]" />
 
       <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-6xl flex-col px-4 py-6 sm:p-6 lg:p-8">
@@ -375,7 +377,11 @@ export default function Services() {
                     const isComplete = step.id < currentStep;
 
                     return (
-                      <div key={step.id} className="relative z-10 flex w-16 flex-col items-center gap-1.5 text-center">
+                      <div
+                        key={step.id}
+                        aria-current={isActive ? 'step' : undefined}
+                        className="relative z-10 flex w-16 flex-col items-center gap-1.5 text-center"
+                      >
                         <div
                           className={cn(
                             'flex h-7 w-7 items-center justify-center rounded-full border text-[11px] font-semibold',
