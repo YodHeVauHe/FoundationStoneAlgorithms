@@ -10,8 +10,8 @@ export default {
   theme: {
   	extend: {
   		fontFamily: {
-  			sans: ['"Inter Variable"', 'system-ui', 'sans-serif'],
-  			mono: ['"JetBrains Mono Variable"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+  			sans: ['"Geist Variable"', 'system-ui', 'sans-serif'],
+  			mono: ['"Geist Mono Variable"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
   			serif: ['Newsreader', 'serif']
   		},
   		borderRadius: {
