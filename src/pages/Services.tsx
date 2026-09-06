@@ -347,7 +347,7 @@ export default function Services() {
         </div>
 
         <div className="grid flex-1 gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
-          <section className="relative overflow-hidden flex h-fit flex-col rounded-2xl border border-border bg-card p-4 sm:p-6">
+          <section className="relative overflow-hidden flex h-fit flex-col rounded-xl border border-border bg-card p-4 sm:p-6">
 
             <div className="mb-4 space-y-3">
               <div className="space-y-1">
@@ -782,7 +782,7 @@ export default function Services() {
             </div>
           </section>
 
-          <aside className="relative overflow-hidden h-fit space-y-3 rounded-2xl border border-border bg-card p-4 lg:sticky lg:top-8 transition-colors duration-300">
+          <aside className="relative overflow-hidden h-fit space-y-3 rounded-xl border border-border bg-card p-4 lg:sticky lg:top-8 transition-colors duration-300">
             <div className="space-y-1">
               <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Current Step</p>
               <h2 className="text-lg font-semibold tracking-tight">{steps[currentStep - 1].label}</h2>

@@ -247,7 +247,7 @@ function Home() {
 
               return (
                 <ParallaxReveal key={capability.id} depth={capability.depth} className="h-full">
-                  <div className="group flex h-full flex-col rounded-2xl border border-border bg-card p-6 transition-colors hover:border-primary/40">
+                  <div className="group flex h-full flex-col rounded-xl border border-border bg-card p-6 transition-colors hover:border-primary/40">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background text-primary">
                       <Icon className="h-5 w-5" />
                     </div>
