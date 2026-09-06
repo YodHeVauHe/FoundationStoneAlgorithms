@@ -2,32 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-  .space-mono-regular {
-    font-family: "Space Mono", serif;
-    font-weight: 400;
-    font-style: normal;
-  }
-
-  .space-mono-bold {
-    font-family: "Space Mono", serif;
-    font-weight: 700;
-    font-style: normal;
-  }
-
-  .space-mono-regular-italic {
-    font-family: "Space Mono", serif;
-    font-weight: 400;
-    font-style: italic;
-  }
-
-  .space-mono-bold-italic {
-    font-family: "Space Mono", serif;
-    font-weight: 700;
-    font-style: italic;
-  }
-}
-
 :root {
   line-height: 1.5;
   font-weight: 400;
@@ -62,16 +36,6 @@
   --radius: 0.75rem;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
 html {
   height: 100%;
 }
@@ -82,32 +46,11 @@ body {
   height: 100%;
 }
 
-h1 {
-  font-size: clamp(1.8em, 4vw, 2.8em);
-  line-height: 1.1;
-  margin: clamp(0.4rem, 1.5vh, 1rem) 0;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: clamp(0.35em, 1.2vw, 0.55em) clamp(0.75em, 2vw, 1em);
-  font-size: clamp(0.8125em, 1.8vw, 0.95em);
-  font-weight: 500;
-  font-family: inherit;
-  background-color: transparent;
-  cursor: pointer;
-  transition: border-color 0.25s;
-  max-width: 90vw;
-}
-
-button:hover {
-  border-color: #646cff;
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 @layer base {
@@ -128,5 +71,23 @@ button:focus-visible {
 
   html.dark {
     color-scheme: dark;
+  }
+}
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid hsl(var(--primary) / 0.6);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
