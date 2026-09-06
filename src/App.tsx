@@ -11,6 +11,7 @@ import {
 import { ArrowRight, Globe, Laptop, Smartphone } from 'lucide-react';
 import whiteLogo from './assets/white.png';
 import Services from './pages/Services';
+import Monolith from '@/components/hero/Monolith';
 import { Button } from '@/components/ui/button';
 
 const capabilities = [
@@ -184,42 +185,45 @@ function Home() {
       <Nav />
 
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col">
-        <section ref={heroRef} className="flex min-h-[92svh] flex-col items-center justify-center gap-6 px-6 py-20 text-center">
+        <section ref={heroRef} className="flex min-h-[92svh] items-center px-6 py-20">
           <motion.div
             style={reduceMotion ? undefined : { y: heroY, opacity: heroOpacity, filter: heroFilter }}
-            className="flex flex-col items-center gap-6"
+            className="mx-auto grid w-full max-w-5xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]"
           >
-            <Reveal>
-              <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
-                Intelligent Systems Studio
-              </span>
-            </Reveal>
-            <Reveal delay={0.08}>
-              <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl">
-                We build intelligent systems that solve hard problems.
-              </h1>
-            </Reveal>
-            <Reveal delay={0.16}>
-              <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-                We engineer custom software systems across mobile, web, and desktop — powered by
-                intelligent agents, optimized execution pipelines, and bespoke client customizations.
-              </p>
-            </Reveal>
-            <Reveal delay={0.24}>
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <Link to="/services">
-                  <Button size="lg">
-                    Start a project request
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-                <a href="#capabilities">
-                  <Button variant="outline" size="lg">
-                    See capabilities
-                  </Button>
-                </a>
-              </div>
-            </Reveal>
+            <div className="flex flex-col items-center gap-6 text-center lg:items-start lg:text-left">
+              <Reveal>
+                <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
+                  Intelligent Systems Studio
+                </span>
+              </Reveal>
+              <Reveal delay={0.08}>
+                <h1 className="max-w-3xl text-4xl font-semibold tracking-tighter sm:text-5xl md:text-6xl">
+                  We build intelligent systems that solve hard problems.
+                </h1>
+              </Reveal>
+              <Reveal delay={0.16}>
+                <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  We engineer custom software systems across mobile, web, and desktop — powered by
+                  intelligent agents, optimized execution pipelines, and bespoke client customizations.
+                </p>
+              </Reveal>
+              <Reveal delay={0.24}>
+                <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+                  <Link to="/services">
+                    <Button size="lg">
+                      Start a project request
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <a href="#capabilities">
+                    <Button variant="outline" size="lg">
+                      See capabilities
+                    </Button>
+                  </a>
+                </div>
+              </Reveal>
+            </div>
+            <Monolith className="order-first h-60 w-full sm:h-80 lg:order-none lg:h-[440px]" />
           </motion.div>
         </section>
 
