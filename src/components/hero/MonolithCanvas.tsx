@@ -3,12 +3,13 @@ import { MonolithScene } from './monolith-scene';
 
 interface MonolithCanvasProps {
   accentHex: string;
+  iconUrl: string;
   reducedMotion: boolean;
   visible: boolean;
   onFailed: () => void;
 }
 
-export default function MonolithCanvas({ accentHex, reducedMotion, visible, onFailed }: MonolithCanvasProps) {
+export default function MonolithCanvas({ accentHex, iconUrl, reducedMotion, visible, onFailed }: MonolithCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<MonolithScene | null>(null);
   const onFailedRef = useRef(onFailed);
@@ -26,6 +27,7 @@ export default function MonolithCanvas({ accentHex, reducedMotion, visible, onFa
       return;
     }
     sceneRef.current = scene;
+    void scene.mountIcon(iconUrl); // swap the prism for the brand icon when traced
 
     const onVisibility = () => scene.setHidden(document.hidden);
     document.addEventListener('visibilitychange', onVisibility);

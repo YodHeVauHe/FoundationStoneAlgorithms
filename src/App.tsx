@@ -8,7 +8,7 @@ import {
   useSpring,
   useTransform,
 } from 'motion/react';
-import { ArrowRight, Globe, Laptop, Smartphone } from 'lucide-react';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import whiteLogo from './assets/white.png';
 import Services from './pages/Services';
 import Monolith from '@/components/hero/Monolith';
@@ -18,22 +18,16 @@ const capabilities = [
   {
     id: 'mobile',
     title: 'Mobile',
-    icon: Smartphone,
-    depth: 0.6,
     line: "Field tools, customer touchpoints, and internal apps in your users' pockets — native or cross-platform.",
   },
   {
     id: 'web',
     title: 'Web Applications',
-    icon: Globe,
-    depth: 1,
     line: 'Dashboards, client portals, and products that make the browser the most useful tab your users open.',
   },
   {
     id: 'system',
     title: 'Desktop Systems',
-    icon: Laptop,
-    depth: 1.4,
     line: 'Focused operational software for teams whose work happens outside the browser.',
   },
 ] as const;
@@ -58,43 +52,6 @@ function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }
   );
 }
 
-/**
- * Scroll-linked depth layer: the wrapped content drifts at its own speed
- * (proportional to `depth`) while crossing the viewport, and fades in once
- * on entry. Scroll-linked y lives on the outer motion.div, the one-shot
- * entrance on the inner one, so the transforms never fight.
- */
-function ParallaxReveal({
-  depth,
-  className,
-  children,
-}: {
-  depth: number;
-  className?: string;
-  children: ReactNode;
-}) {
-  const reduceMotion = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const y = useTransform(scrollYProgress, [0, 1], [48 * depth, -16 * depth]);
-  const smoothY = useSpring(y, { stiffness: 120, damping: 30, restDelta: 0.001 });
-
-  return (
-    <div ref={ref} className={className}>
-      <motion.div style={reduceMotion ? undefined : { y: smoothY }}>
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-10% 0px' }}
-          transition={{ duration: 0.45, ease: 'easeOut' }}
-        >
-          {children}
-        </motion.div>
-      </motion.div>
-    </div>
-  );
-}
-
 function ScrollProgressRail() {
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll();
@@ -105,6 +62,41 @@ function ScrollProgressRail() {
       className="fixed inset-x-0 top-0 z-50 h-px origin-left bg-primary/60"
       style={reduceMotion ? undefined : { scaleX }}
     />
+  );
+}
+
+/** Blue glyph ribbon — the poster band between hero and proof. */
+function Marquee() {
+  const phrases = [
+    'We build intelligent systems',
+    '{ }',
+    'That solve hard problems',
+    '</>',
+    'Foundation Stone Algorithms',
+    '{ }',
+  ];
+
+  const half = (
+    <div className="flex shrink-0 items-center">
+      {phrases.map((phrase, index) => (
+        <span
+          key={index}
+          className="flex items-center font-mono text-sm font-medium uppercase tracking-[0.22em] text-black"
+        >
+          <span className="px-6">{phrase}</span>
+          <span className="text-black/50">✦</span>
+        </span>
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="relative z-10 w-[110%] -translate-x-[5%] -rotate-1 border-y-2 border-black bg-goggles py-3 shadow-[0_0_70px_hsl(221_85%_58%/0.28)]">
+      <div className="flex w-max animate-marquee">
+        {half}
+        {half}
+      </div>
+    </div>
   );
 }
 
@@ -123,7 +115,7 @@ function Nav() {
         (scrolled ? 'border-b border-border bg-background/85 backdrop-blur-md' : 'border-b border-transparent')
       }
     >
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between">
         <div className="flex items-center gap-2.5">
           <img src={whiteLogo} alt="Foundation Stone Algorithms logo" className="h-8 w-8 object-contain" />
           <span className="text-sm font-semibold tracking-tight">Foundation Stone Algorithms</span>
@@ -139,7 +131,7 @@ function Nav() {
 function Home() {
   const reduceMotion = useReducedMotion();
 
-  // Global background planes: glow drifts down-scale, grid counter-drifts up and fades.
+  // Ambient planes: glow drifts down-scale, grid counter-drifts up and fades.
   const { scrollYProgress } = useScroll();
   const glowY = useTransform(scrollYProgress, [0, 1], [0, 220]);
   const glowScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
@@ -169,8 +161,10 @@ function Home() {
     <div className="relative min-h-[100svh] overflow-x-clip bg-background text-foreground">
       <ScrollProgressRail />
 
-      {/* Layered ambient background: two depth planes, clipped to their own layer so the
-          scroll-linked glow/grid can never add phantom scrollable overflow to the page */}
+      {/* Film grain — kills the flat generated-page look */}
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-30 bg-grain opacity-[0.05]" />
+
+      {/* Layered ambient background: two depth planes, clipped to their own layer */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
         <motion.div
           className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,hsl(var(--primary)/0.10),transparent_55%)]"
@@ -184,25 +178,47 @@ function Home() {
 
       <Nav />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col">
-        <section ref={heroRef} className="flex min-h-[92svh] items-center px-6 py-20">
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col">
+        {/* Hero — asymmetric: massive type left, the owl sigil on its blue field right */}
+        <section ref={heroRef} className="relative flex min-h-[92svh] items-center px-6 py-20">
+          <motion.span
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-8 top-16 hidden select-none font-mono text-[200px] leading-none text-white/[0.05] lg:block"
+            animate={reduceMotion ? undefined : { y: [0, -16, 0] }}
+            transition={reduceMotion ? undefined : { duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            {'{'}
+          </motion.span>
+          <motion.span
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-4 bottom-10 hidden select-none font-mono text-[200px] leading-none text-goggles/15 lg:block"
+            animate={reduceMotion ? undefined : { y: [0, 14, 0] }}
+            transition={reduceMotion ? undefined : { duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            {'}'}
+          </motion.span>
+
           <motion.div
             style={reduceMotion ? undefined : { y: heroY, opacity: heroOpacity, filter: heroFilter }}
-            className="mx-auto grid w-full max-w-5xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]"
+            className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]"
           >
-            <div className="flex flex-col items-center gap-6 text-center lg:items-start lg:text-left">
+            <div className="relative flex flex-col items-center gap-6 text-center lg:items-start lg:text-left">
+              <span className="absolute -top-9 right-0 hidden -rotate-6 select-none items-center rounded-sm bg-white px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-widest text-black lg:inline-flex">
+                Solves hard problems ✦
+              </span>
               <Reveal>
                 <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
                   Intelligent Systems Studio
                 </span>
               </Reveal>
               <Reveal delay={0.08}>
-                <h1 className="max-w-3xl text-4xl font-semibold tracking-tighter sm:text-5xl md:text-6xl">
-                  We build intelligent systems that solve hard problems.
+                <h1 className="text-5xl font-semibold tracking-tighter sm:text-6xl xl:text-7xl">
+                  We build <span className="text-goggles">intelligent</span> systems that solve hard
+                  problems.
                 </h1>
               </Reveal>
               <Reveal delay={0.16}>
-                <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+                <p className="max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
                   We engineer custom software systems across mobile, web, and desktop — powered by
                   intelligent agents, optimized execution pipelines, and bespoke client customizations.
                 </p>
@@ -223,53 +239,64 @@ function Home() {
                 </div>
               </Reveal>
             </div>
-            <Monolith className="order-first h-60 w-full sm:h-80 lg:order-none lg:h-[440px]" />
+            <div className="relative order-first h-64 w-full sm:h-80 lg:order-none lg:h-[460px]">
+              <div
+                aria-hidden="true"
+                className="absolute inset-x-4 top-8 bottom-8 bg-goggles sm:inset-x-10 lg:inset-x-14"
+              />
+              <Monolith className="absolute inset-0" />
+            </div>
           </motion.div>
         </section>
 
-        <ParallaxReveal depth={0.25} className="px-6">
-          <div className="grid grid-cols-3 divide-x divide-border border-y border-border py-6 text-center">
-            {trustMetrics.map((metric) => (
-              <div key={metric.label} className="px-2">
-                <p className="font-mono text-xl font-semibold text-foreground sm:text-2xl">{metric.value}</p>
+        <Marquee />
+
+        <Reveal>
+          <div className="grid grid-cols-3 divide-x divide-border border-b border-border">
+            {trustMetrics.map((metric, index) => (
+              <div key={metric.label} className="px-3 py-7 text-center sm:py-9">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-goggles">
+                  0{index + 1}
+                </p>
+                <p className="mt-2 font-mono text-xl font-semibold text-foreground sm:text-2xl">
+                  {metric.value}
+                </p>
                 <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                   {metric.label}
                 </p>
               </div>
             ))}
           </div>
-        </ParallaxReveal>
+        </Reveal>
 
-        <section id="capabilities" className="scroll-mt-16 px-6 py-28">
+        {/* Capabilities — a ledger, not a card grid. Hover fills the row blue. */}
+        <section id="capabilities" className="scroll-mt-16 px-6 py-24">
           <Reveal>
-            <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-primary">Capabilities</span>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">What we build</h2>
+            <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
+              Capabilities
+            </span>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tighter sm:text-4xl">What we build</h2>
           </Reveal>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {capabilities.map((capability) => {
-              const Icon = capability.icon;
-
-              return (
-                <ParallaxReveal key={capability.id} depth={capability.depth} className="h-full">
-                  <div className="group flex h-full flex-col rounded-xl border border-border bg-card p-6 transition-colors hover:border-primary/40">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background text-primary">
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <h3 className="mt-4 text-base font-semibold tracking-tight">{capability.title}</h3>
-                    <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
-                      {capability.line}
-                    </p>
-                    <Link
-                      to={`/services?type=${capability.id}`}
-                      className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
-                    >
-                      Request quote
-                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                    </Link>
-                  </div>
-                </ParallaxReveal>
-              );
-            })}
+          <div className="mt-10 border-t border-border">
+            {capabilities.map((capability, index) => (
+              <Reveal key={capability.id} delay={index * 0.06}>
+                <Link
+                  to={`/services?type=${capability.id}`}
+                  className="group relative flex items-center gap-6 overflow-hidden border-b border-border px-2 py-8 transition-colors duration-200 hover:bg-goggles sm:gap-10 sm:px-4"
+                >
+                  <span className="font-mono text-xs text-muted-foreground transition-colors duration-200 group-hover:text-black/60">
+                    0{index + 1}
+                  </span>
+                  <span className="flex-1 text-2xl font-semibold tracking-tighter transition-colors duration-200 group-hover:text-black sm:text-4xl">
+                    {capability.title}
+                  </span>
+                  <span className="hidden max-w-sm text-sm leading-relaxed text-muted-foreground transition-colors duration-200 group-hover:text-black/70 md:block">
+                    {capability.line}
+                  </span>
+                  <ArrowUpRight className="h-6 w-6 shrink-0 text-muted-foreground transition-all duration-200 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-black" />
+                </Link>
+              </Reveal>
+            ))}
           </div>
         </section>
 
@@ -278,10 +305,15 @@ function Home() {
           className="border-t border-border px-6 py-16 text-center font-mono text-sm uppercase tracking-[0.2em] text-muted-foreground"
           style={reduceMotion ? undefined : { x: statementX, opacity: statementOpacity }}
         >
+          <span className="text-goggles">{'{ '}</span>
           Intelligent systems, engineered for your problem.
+          <span className="text-goggles">{' }'}</span>
         </motion.p>
 
-        <footer className="px-6 py-8 text-center text-xs text-muted-foreground">
+        <footer className="flex flex-col items-center gap-3 px-6 py-10 text-center text-xs text-muted-foreground">
+          <span aria-hidden="true" className="font-mono text-sm text-foreground/70">
+            {'{ }'}
+          </span>
           {new Date().getFullYear()} Foundation Stone Algorithms. All rights reserved.
         </footer>
       </div>

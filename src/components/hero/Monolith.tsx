@@ -1,5 +1,7 @@
 import { Component, Suspense, lazy, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useReducedMotion } from 'motion/react';
+import { cn } from '@/lib/utils';
+import iconUrl from '@/assets/white.png';
 
 const MonolithCanvas = lazy(() => import('./MonolithCanvas'));
 
@@ -25,7 +27,7 @@ class SceneBoundary extends Component<
 function Silhouette() {
   return (
     <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
-      <div className="h-[68%] w-[58%] bg-gradient-to-br from-neutral-700 via-neutral-900 to-black [clip-path:polygon(50%_0,100%_100%,0_100%)] drop-shadow-[0_0_60px_hsl(197_82%_63%/0.18)]" />
+      <div className="aspect-square h-[74%] rounded-full bg-gradient-to-br from-neutral-600 via-neutral-900 to-black shadow-[0_0_90px_hsl(197_82%_63%/0.16)] ring-1 ring-white/10" />
     </div>
   );
 }
@@ -47,7 +49,7 @@ export default function Monolith({ className }: { className?: string }) {
   }, []);
 
   return (
-    <div ref={containerRef} className={`relative ${className ?? ''}`} aria-hidden="true">
+    <div ref={containerRef} className={cn('relative', className)} aria-hidden="true">
       {failed ? (
         <Silhouette />
       ) : (
@@ -55,6 +57,7 @@ export default function Monolith({ className }: { className?: string }) {
           <Suspense fallback={<Silhouette />}>
             <MonolithCanvas
               accentHex={ACCENT_HEX}
+              iconUrl={iconUrl}
               reducedMotion={reduceMotion}
               visible={visible}
               onFailed={() => setFailed(true)}
