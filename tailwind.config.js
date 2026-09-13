@@ -53,6 +53,7 @@ export default {
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
+  			goggles: 'hsl(var(--goggles))',
   			chart: {
   				'1': 'hsl(var(--chart-1))',
   				'2': 'hsl(var(--chart-2))',
@@ -62,6 +63,14 @@ export default {
   			}
   		},
   		keyframes: {
+  			marquee: {
+  				'0%': {
+  					transform: 'translateX(0)'
+  				},
+  				'100%': {
+  					transform: 'translateX(-50%)'
+  				}
+  			},
   			'accordion-down': {
   				from: {
   					height: '0'
@@ -80,6 +89,7 @@ export default {
   			}
   		},
   		animation: {
+  			marquee: 'marquee 26s linear infinite',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		}
