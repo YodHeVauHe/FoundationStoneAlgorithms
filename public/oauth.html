@@ -3,24 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Redirecting...</title>
+  <title>Login complete</title>
   <style>
     body { background: #070A0F; color: #fff; font-family: monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
     p { opacity: 0.6; font-size: 13px; letter-spacing: 0.05em; }
   </style>
 </head>
 <body>
-  <p>REDIRECTING TO DOAB...</p>
-  <script>
-    // Deriv redirects here with ?acct1=...&token1=...&cur1=...
-    // Forward the exact query string to the app's custom scheme
-    var search = window.location.search; // e.g. "?acct1=CR123&token1=xxx&cur1=USD"
-    var deepLink = 'doab://oauth' + search;
-    window.location.replace(deepLink);
-    // Fallback message after 2s if redirect didn't work
-    setTimeout(function() {
-      document.querySelector('p').textContent = 'If the app did not open, please return to DOAB and try again.';
-    }, 2000);
-  </script>
+  <!--
+    Deriv redirects here with ?acct1=...&token1=...&cur1=...
+    The DOAB app watches this URL via openAuthSessionAsync and parses the
+    tokens from the query string. This page must NOT navigate away or hop to
+    the app's custom scheme (doab://...) — doing so aborts the auth session.
+  -->
+  <p>Authenticated — return to DOAB.</p>
 </body>
 </html>
