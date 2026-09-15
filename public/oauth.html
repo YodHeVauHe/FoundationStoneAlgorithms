@@ -5,17 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login complete</title>
   <style>
-    body { background: #070A0F; color: #fff; font-family: monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    body { background: #070A0F; color: #fff; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; height: 100vh; margin: 0; }
     p { opacity: 0.6; font-size: 13px; letter-spacing: 0.05em; }
+    a { color: #4c9ffe; font-size: 13px; letter-spacing: 0.05em; }
   </style>
 </head>
 <body>
   <!--
     Deriv redirects here with ?acct1=...&token1=...&cur1=...
-    The DOAB app watches this URL via openAuthSessionAsync and parses the
-    tokens from the query string. This page must NOT navigate away or hop to
-    the app's custom scheme (doab://...) — doing so aborts the auth session.
+    openAuthSessionAsync (expo-web-browser) cannot read an https URL — the
+    auth session only completes when the browser navigates to the app's own
+    scheme. So this page MUST forward the exact query to doab://oauth (the
+    "scheme" in DOAB's app.json). The app parses acct/token/cur from that URL.
+    Do not remove this hop: without it the auth session hangs forever.
   -->
-  <p>Authenticated — return to DOAB.</p>
+  <p id="msg">Authenticated — returning to DOAB…</p>
+  <a id="manual" href="doab://oauth" hidden>Tap here to return to DOAB</a>
+  <script>
+    (function () {
+      var q = window.location.search;
+      var target = 'doab://oauth' + q;
+      document.getElementById('manual').href = target;
+      if (q.indexOf('acct1=') !== -1 || q.indexOf('token1=') !== -1) {
+        window.location.replace(target);
+        // Some browsers block programmatic scheme navigation; offer a tap.
+        setTimeout(function () { document.getElementById('manual').hidden = false; }, 1500);
+      } else {
+        document.getElementById('msg').textContent = 'Nothing to return — open DOAB and sign in again.';
+        document.getElementById('manual').hidden = false;
+      }
+    })();
+  </script>
 </body>
 </html>
