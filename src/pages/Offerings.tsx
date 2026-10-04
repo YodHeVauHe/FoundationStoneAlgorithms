@@ -62,6 +62,26 @@ function OfferingPage({ offering }: { offering: Offering }) {
             </Button>
           </Link>
         </div>
+        {offering.related?.length ? (
+          <nav aria-label="Related" className="mt-12 max-w-2xl border-t border-border pt-8">
+            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
+              In this quote
+            </p>
+            <ul className="mt-4 border-t border-border">
+              {offering.related.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    to={link.href}
+                    className="group flex items-center justify-between border-b border-border py-4 text-sm font-semibold tracking-tight transition-colors hover:text-goggles"
+                  >
+                    {link.label}
+                    <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-goggles" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ) : null}
           </div>
           <Monolith className="mx-auto h-64 w-64 sm:h-72 sm:w-72" />
         </div>
@@ -86,3 +106,24 @@ export function WebPage() {
 export function DesktopPage() {
   return <OfferingPage offering={offerings.desktop} />;
 }
+
+export function DashboardPage() {
+  return <OfferingPage offering={offerings.dashboard} />;
+}
+
+export function ClientPortalPage() {
+  return <OfferingPage offering={offerings.clientPortal} />;
+}
+
+export function BusinessWebsitePage() {
+  return <OfferingPage offering={offerings.businessWebsite} />;
+}
+
+export function AndroidPage() {
+  return <OfferingPage offering={offerings.android} />;
+}
+
+export function IosPage() {
+  return <OfferingPage offering={offerings.ios} />;
+}
+
