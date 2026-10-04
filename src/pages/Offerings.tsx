@@ -1,59 +1,16 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { offerings, type Offering } from '@/seo/offerings.mjs';
 import { usePageMeta } from '@/seo/usePageMeta';
 import Monolith from '@/components/hero/Monolith';
 
-type Offering = {
-  eyebrow: string;
-  title: string;
-  metaDescription: string;
-  heading: string;
-  paragraphs: [string, string];
-  quoteHref: string;
-};
-
-const offerings = {
-  mobile: {
-    eyebrow: 'Capabilities · 01',
-    title: 'Mobile | Foundation Stone Algorithms',
-    metaDescription:
-      'Field tools, customer touchpoints, and internal apps in your users\' pockets — native or cross-platform. Request a focused quote for mobile apps from Foundation Stone Algorithms.',
-    heading: 'Mobile',
-    paragraphs: [
-      "Field tools, customer touchpoints, and internal apps in your users' pockets — native or cross-platform.",
-      'Native or cross-platform experiences for phones and tablets. The project request starts with one service, then the device target, before you describe the work.',
-    ],
-    quoteHref: '/services?type=mobile',
-  },
-  web: {
-    eyebrow: 'Capabilities · 02',
-    title: 'Web Applications | Foundation Stone Algorithms',
-    metaDescription:
-      'Dashboards, client portals, and products that make the browser the most useful tab your users open. Request a focused quote for web applications from Foundation Stone Algorithms.',
-    heading: 'Web Applications',
-    paragraphs: [
-      'Dashboards, client portals, and products that make the browser the most useful tab your users open.',
-      'Client portals, dashboards, and customer-facing browser products. Define the closest shape — a dashboard, a client portal, or a business website — then describe the work.',
-    ],
-    quoteHref: '/services?type=web',
-  },
-  desktop: {
-    eyebrow: 'Capabilities · 03',
-    title: 'Desktop Systems | Foundation Stone Algorithms',
-    metaDescription:
-      'Focused operational software for teams whose work happens outside the browser. Request a focused quote for desktop software from Foundation Stone Algorithms.',
-    heading: 'Desktop Systems',
-    paragraphs: [
-      'Focused operational software for teams whose work happens outside the browser.',
-      'Focused software for operational teams on desktop environments. Choose one or more operating systems — Linux, macOS, or Windows — then review the request before sending it.',
-    ],
-    quoteHref: '/services?type=system',
-  },
-} as const satisfies Record<string, Offering>;
-
 function OfferingPage({ offering }: { offering: Offering }) {
-  usePageMeta(offering.title, offering.metaDescription);
+  usePageMeta({
+    title: offering.title,
+    description: offering.metaDescription,
+    canonicalUrl: offering.canonicalUrl,
+  });
 
   return (
     <div className="relative min-h-[100svh] overflow-x-clip bg-background text-foreground">
