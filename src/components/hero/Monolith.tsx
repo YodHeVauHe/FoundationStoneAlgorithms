@@ -32,7 +32,7 @@ function Silhouette() {
   );
 }
 
-export default function Monolith({ className }: { className?: string }) {
+export default function Monolith({ className, still = false }: { className?: string; still?: boolean }) {
   const reduceMotion = useReducedMotion() ?? false;
   const [failed, setFailed] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -58,8 +58,9 @@ export default function Monolith({ className }: { className?: string }) {
             <MonolithCanvas
               accentHex={ACCENT_HEX}
               iconUrl={iconUrl}
-              reducedMotion={reduceMotion}
-              visible={visible}
+              reducedMotion={reduceMotion || still}
+              still={still}
+              visible={still || visible}
               onFailed={() => setFailed(true)}
             />
           </Suspense>
