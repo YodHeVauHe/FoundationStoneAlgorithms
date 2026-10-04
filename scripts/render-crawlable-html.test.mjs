@@ -132,11 +132,11 @@ test('desktop crawlable document has the desktop title, description, canonical, 
 
 test('specific wizard targets are crawlable pages linked from the parent offering', () => {
   const specifics = [
-    ['/dashboard', offerings.dashboard, '/services?type=web', 'Dashboard'],
-    ['/client-portal', offerings.clientPortal, '/services?type=web', 'Client Portal'],
-    ['/business-website', offerings.businessWebsite, '/services?type=web', 'Business Website'],
-    ['/android', offerings.android, '/services?type=mobile', 'Android'],
-    ['/ios', offerings.ios, '/services?type=mobile', 'iOS'],
+    ['/dashboard', offerings.dashboard, '/services?type=web&focus=dashboard', 'Dashboard'],
+    ['/client-portal', offerings.clientPortal, '/services?type=web&focus=portal', 'Client Portal'],
+    ['/business-website', offerings.businessWebsite, '/services?type=web&focus=website', 'Business Website'],
+    ['/android', offerings.android, '/services?type=mobile&platform=android', 'Android'],
+    ['/ios', offerings.ios, '/services?type=mobile&platform=ios', 'iOS'],
   ];
 
   for (const [pathname, offering, quoteHref, heading] of specifics) {
@@ -150,7 +150,8 @@ test('specific wizard targets are crawlable pages linked from the parent offerin
     assert.equal(canonicalHref(html), offering.canonicalUrl);
     assert.equal(metaContent(html, 'property', 'og:url'), offering.canonicalUrl);
     assert.match(html, new RegExp(`<h1>${heading.replace(' ', ' ')}</h1>`));
-    assert.match(html, new RegExp(`href="${quoteHref.replace('?', '\\?')}"`));
+    const hrefPattern = quoteHref.replaceAll('?', '\\?').replaceAll('&', '&amp;');
+    assert.match(html, new RegExp(`href="${hrefPattern}"`));
   }
 
   const webHtml = rendered('/web');

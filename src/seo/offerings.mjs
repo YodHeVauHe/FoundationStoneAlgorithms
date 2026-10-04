@@ -64,7 +64,7 @@ export const offerings = {
       'Internal tools and analytics views.',
       'Dashboards, client portals, and products that make the browser the most useful tab your users open. Define the closest shape — a dashboard — then describe the work.',
     ],
-    quoteHref: '/services?type=web',
+    quoteHref: '/services?type=web&focus=dashboard',
   }),
   clientPortal: offeringPage('/client-portal', {
     eyebrow: 'Web · Client Portal',
@@ -76,7 +76,7 @@ export const offerings = {
       'Accounts, onboarding, and user workflows.',
       'Client portals, dashboards, and customer-facing browser products. Define the closest shape — a client portal — then describe the work.',
     ],
-    quoteHref: '/services?type=web',
+    quoteHref: '/services?type=web&focus=portal',
   }),
   businessWebsite: offeringPage('/business-website', {
     eyebrow: 'Web · Business Website',
@@ -88,7 +88,7 @@ export const offerings = {
       'Marketing pages with lighter interactions.',
       'Client portals, dashboards, and customer-facing browser products. Define the closest shape — a business website — then describe the work.',
     ],
-    quoteHref: '/services?type=web',
+    quoteHref: '/services?type=web&focus=website',
   }),
   android: offeringPage('/android', {
     eyebrow: 'Mobile · Android',
@@ -100,7 +100,7 @@ export const offerings = {
       'Target Android users first.',
       'Native or cross-platform experiences for phones and tablets. Pick the device target for the app quote.',
     ],
-    quoteHref: '/services?type=mobile',
+    quoteHref: '/services?type=mobile&platform=android',
   }),
   ios: offeringPage('/ios', {
     eyebrow: 'Mobile · iOS',
@@ -112,6 +112,6 @@ export const offerings = {
       'Target iOS users first.',
       'Native or cross-platform experiences for phones and tablets. Pick the device target for the app quote.',
     ],
-    quoteHref: '/services?type=mobile',
+    quoteHref: '/services?type=mobile&platform=ios',
   }),
 };

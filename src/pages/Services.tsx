@@ -207,15 +207,29 @@ export default function Services() {
     };
   }, []);
 
-  // Deep-link preselection from home capability cards: /services?type=mobile|web|system
+  // Deep-link preselection: /services?type=mobile|web|system
+  // Specific pages also pass focus (web) or platform (mobile) so step 2 is set on the same load.
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
     // Guard: don't clobber mid-flow state when history navigation restores a ?type= URL
     if (currentStep !== 1) return;
     const type = searchParams.get('type');
-    if (type === 'mobile' || type === 'web' || type === 'system') {
-      setSelectedProduct(type);
+    if (type !== 'mobile' && type !== 'web' && type !== 'system') return;
+    setSelectedProduct(type);
+
+    if (type === 'web') {
+      const focus = searchParams.get('focus');
+      if (focus === 'dashboard' || focus === 'portal' || focus === 'website') {
+        setWebFocus(focus);
+      }
+    }
+
+    if (type === 'mobile') {
+      const platform = searchParams.get('platform');
+      if (platform === 'android' || platform === 'ios' || platform === 'both') {
+        setMobilePlatform(platform);
+      }
     }
   }, [searchParams, currentStep]);
 
