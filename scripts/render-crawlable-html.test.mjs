@@ -129,6 +129,39 @@ test('desktop crawlable document has the desktop title, description, canonical, 
   assert.doesNotMatch(html, /We build intelligent systems that solve hard problems/);
 });
 
+
+test('specific wizard targets are crawlable pages linked from the parent offering', () => {
+  const specifics = [
+    ['/dashboard', offerings.dashboard, '/services?type=web', 'Dashboard'],
+    ['/client-portal', offerings.clientPortal, '/services?type=web', 'Client Portal'],
+    ['/business-website', offerings.businessWebsite, '/services?type=web', 'Business Website'],
+    ['/android', offerings.android, '/services?type=mobile', 'Android'],
+    ['/ios', offerings.ios, '/services?type=mobile', 'iOS'],
+  ];
+
+  for (const [pathname, offering, quoteHref, heading] of specifics) {
+    assert.equal(offering.path, pathname);
+    assert.equal(offering.canonicalUrl, `https://www.foundationstonealgorithms.shop${pathname}`);
+    assert.equal(offering.quoteHref, quoteHref);
+    assert.equal(offering.heading, heading);
+    const html = rendered(pathname);
+    assert.equal(titleOf(html), offering.title);
+    assert.equal(metaContent(html, 'name', 'description'), offering.metaDescription);
+    assert.equal(canonicalHref(html), offering.canonicalUrl);
+    assert.equal(metaContent(html, 'property', 'og:url'), offering.canonicalUrl);
+    assert.match(html, new RegExp(`<h1>${heading.replace(' ', ' ')}</h1>`));
+    assert.match(html, new RegExp(`href="${quoteHref.replace('?', '\\?')}"`));
+  }
+
+  const webHtml = rendered('/web');
+  assert.match(webHtml, /href="\/dashboard"/);
+  assert.match(webHtml, /href="\/client-portal"/);
+  assert.match(webHtml, /href="\/business-website"/);
+  const mobileHtml = rendered('/mobile');
+  assert.match(mobileHtml, /href="\/android"/);
+  assert.match(mobileHtml, /href="\/ios"/);
+});
+
 test('services crawlable document keeps its quote-page title, description, canonical, and og:url', () => {
   const html = rendered('/services');
 

@@ -10,7 +10,16 @@ import {
 } from 'motion/react';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import Services from './pages/Services';
-import { DesktopPage, MobilePage, WebPage } from './pages/Offerings';
+import {
+  AndroidPage,
+  BusinessWebsitePage,
+  ClientPortalPage,
+  DashboardPage,
+  DesktopPage,
+  IosPage,
+  MobilePage,
+  WebPage,
+} from './pages/Offerings';
 import Monolith from '@/components/hero/Monolith';
 import { Button } from '@/components/ui/button';
 
@@ -332,6 +341,11 @@ function App() {
         <Route path="/mobile" element={<MobilePage />} />
         <Route path="/web" element={<WebPage />} />
         <Route path="/desktop" element={<DesktopPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/client-portal" element={<ClientPortalPage />} />
+        <Route path="/business-website" element={<BusinessWebsitePage />} />
+        <Route path="/android" element={<AndroidPage />} />
+        <Route path="/ios" element={<IosPage />} />
       </Routes>
     </Router>
   );

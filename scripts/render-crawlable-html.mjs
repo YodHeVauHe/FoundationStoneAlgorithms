@@ -41,6 +41,17 @@ function escapeHtml(value) {
     .replaceAll('"', '&quot;');
 }
 
+function relatedLinksHtml(offering) {
+  if (!offering.related?.length) return '';
+  const items = offering.related
+    .map(
+      (link) =>
+        `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`,
+    )
+    .join('');
+  return `<nav aria-label="Related"><ul>${items}</ul></nav>`;
+}
+
 function offeringFallbackHtml(offering) {
   const [lead, detail] = offering.paragraphs;
   return `
@@ -57,6 +68,7 @@ function offeringFallbackHtml(offering) {
       <p>${escapeHtml(lead)}</p>
       <p>${escapeHtml(detail)}</p>
       <p><a href="${escapeHtml(offering.quoteHref)}">Start a project request</a></p>
+      ${relatedLinksHtml(offering)}
     </main>
   `;
 }
