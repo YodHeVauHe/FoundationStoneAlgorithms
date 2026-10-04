@@ -6,10 +6,11 @@ interface MonolithCanvasProps {
   iconUrl: string;
   reducedMotion: boolean;
   visible: boolean;
+  still: boolean;
   onFailed: () => void;
 }
 
-export default function MonolithCanvas({ accentHex, iconUrl, reducedMotion, visible, onFailed }: MonolithCanvasProps) {
+export default function MonolithCanvas({ accentHex, iconUrl, reducedMotion, visible, still, onFailed }: MonolithCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<MonolithScene | null>(null);
   const onFailedRef = useRef(onFailed);
@@ -21,7 +22,7 @@ export default function MonolithCanvas({ accentHex, iconUrl, reducedMotion, visi
 
     let scene: MonolithScene;
     try {
-      scene = new MonolithScene(canvas, { accentHex });
+      scene = new MonolithScene(canvas, { accentHex, still });
     } catch {
       onFailedRef.current();
       return;

@@ -9,24 +9,27 @@ import {
   useTransform,
 } from 'motion/react';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
-import whiteLogo from './assets/white.png';
 import Services from './pages/Services';
+import { DesktopPage, MobilePage, WebPage } from './pages/Offerings';
 import Monolith from '@/components/hero/Monolith';
 import { Button } from '@/components/ui/button';
 
 const capabilities = [
   {
     id: 'mobile',
+    href: '/mobile',
     title: 'Mobile',
     line: "Field tools, customer touchpoints, and internal apps in your users' pockets — native or cross-platform.",
   },
   {
     id: 'web',
+    href: '/web',
     title: 'Web Applications',
     line: 'Dashboards, client portals, and products that make the browser the most useful tab your users open.',
   },
   {
     id: 'system',
+    href: '/desktop',
     title: 'Desktop Systems',
     line: 'Focused operational software for teams whose work happens outside the browser.',
   },
@@ -117,7 +120,8 @@ function Nav() {
     >
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <img src={whiteLogo} alt="Foundation Stone Algorithms logo" className="h-8 w-8 object-contain" />
+          <Monolith still className="h-8 w-8" />
+          <span className="sr-only">Foundation Stone Algorithms</span>
           <span className="text-sm font-semibold tracking-tight">Foundation Stone Algorithms</span>
         </div>
         <Link to="/services">
@@ -281,7 +285,7 @@ function Home() {
             {capabilities.map((capability, index) => (
               <Reveal key={capability.id} delay={index * 0.06}>
                 <Link
-                  to={`/services?type=${capability.id}`}
+                  to={capability.href}
                   className="group relative flex items-center gap-6 overflow-hidden border-b border-border px-2 py-8 transition-colors duration-200 hover:bg-goggles sm:gap-10 sm:px-4"
                 >
                   <span className="font-mono text-xs text-muted-foreground transition-colors duration-200 group-hover:text-black/60">
@@ -311,9 +315,7 @@ function Home() {
         </motion.p>
 
         <footer className="flex flex-col items-center gap-3 px-6 py-10 text-center text-xs text-muted-foreground">
-          <span aria-hidden="true" className="font-mono text-sm text-foreground/70">
-            {'{ }'}
-          </span>
+          <Monolith still className="h-8 w-8" />
           {new Date().getFullYear()} Foundation Stone Algorithms. All rights reserved.
         </footer>
       </div>
@@ -327,6 +329,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/mobile" element={<MobilePage />} />
+        <Route path="/web" element={<WebPage />} />
+        <Route path="/desktop" element={<DesktopPage />} />
       </Routes>
     </Router>
   );

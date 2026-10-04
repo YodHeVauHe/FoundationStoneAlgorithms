@@ -21,6 +21,8 @@ import { buildIconLayers } from './icon-shapes';
 export interface MonolithSceneOptions {
   /** Accent hex for rim light + fallback edges (≈ --primary). */
   accentHex: string;
+  /** Hold a fixed angle. No spin, bob, or pointer tilt. */
+  still?: boolean;
 }
 
 /**
@@ -43,6 +45,7 @@ export class MonolithScene {
   private reducedMotion = false;
   private pointerTarget = { x: 0, y: 0 };
   private pointer = { x: 0, y: 0 };
+  private still: boolean;
 
   constructor(
     private canvas: HTMLCanvasElement,
@@ -75,9 +78,10 @@ export class MonolithScene {
     fill.position.set(-1.8, -0.8, 3);
     this.scene.add(fill);
 
+    this.still = options.still ?? false;
     this.setContent(this.buildPrism(options.accentHex)); // instant first paint
     this.resize();
-    this.rafId = requestAnimationFrame(this.tick);
+    if (!this.still) this.rafId = requestAnimationFrame(this.tick);
   }
 
   /** Swaps the fallback prism for the traced brand-icon layers. */
@@ -209,7 +213,14 @@ export class MonolithScene {
     }
     this.content = next;
     this.scene.add(next);
+    this.pose();
     this.renderer.render(this.scene, this.camera);
+  }
+
+  private pose() {
+    if (!this.content || !this.still) return;
+    this.content.rotation.set(0.22, 0.62, 0);
+    this.content.position.y = 0;
   }
 
   private disposeObject(root: Object3D) {
@@ -228,6 +239,12 @@ export class MonolithScene {
     this.rafId = requestAnimationFrame(this.tick);
     if (this.hidden || !this.visible) {
       this.clock.getDelta(); // drain so the first resumed frame has a sane delta
+      return;
+    }
+
+    if (this.still) {
+      this.pose();
+      this.renderer.render(this.scene, this.camera);
       return;
     }
 
