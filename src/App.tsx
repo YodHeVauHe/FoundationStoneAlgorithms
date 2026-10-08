@@ -323,7 +323,24 @@ function Home() {
           <span className="text-goggles">{' }'}</span>
         </motion.p>
 
-        <footer className="flex flex-col items-center gap-3 px-6 py-10 text-center text-xs text-muted-foreground">
+        <footer className="flex flex-col items-center gap-4 px-6 py-10 text-center text-xs text-muted-foreground">
+          <nav aria-label="Services" className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            {capabilities.map((capability) => (
+              <Link
+                key={capability.id}
+                to={capability.href}
+                className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {capability.title}
+              </Link>
+            ))}
+            <Link
+              to="/services"
+              className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Start a project
+            </Link>
+          </nav>
           <Monolith still className="h-8 w-8" />
           {new Date().getFullYear()} Foundation Stone Algorithms. All rights reserved.
         </footer>

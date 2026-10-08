@@ -9,7 +9,7 @@ export type PageMeta = {
 export const homepageMeta: PageMeta = {
   title: 'Foundation Stone Algorithms | Intelligent Systems Studio',
   description:
-    'We build intelligent systems that solve hard problems. Custom software across mobile, web, and desktop — powered by intelligent agents, optimized execution pipelines, and bespoke client customizations.',
+    'We build intelligent systems that solve hard problems. An engineering studio for custom mobile apps, web applications, and desktop software — powered by intelligent agents, optimized execution pipelines, and bespoke client customizations for teams that need software shaped around how they actually work.',
   canonicalUrl: `${siteOrigin}/`,
 };
 

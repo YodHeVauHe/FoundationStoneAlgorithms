@@ -13,7 +13,7 @@ export const offerings = {
     eyebrow: 'Capabilities · 01',
     title: 'Mobile | Foundation Stone Algorithms',
     metaDescription:
-      'Field tools, customer touchpoints, and internal apps in your users\' pockets — native or cross-platform. Request a focused quote for mobile apps from Foundation Stone Algorithms.',
+      'Field tools, customer touchpoints, and internal apps that live in your users’ pockets. We design and engineer native and cross-platform mobile experiences for Android and iOS — built for clarity in the field, reliability under real use, and the workflows your team already depends on.',
     heading: 'Mobile',
     paragraphs: [
       "Field tools, customer touchpoints, and internal apps in your users' pockets — native or cross-platform.",
@@ -29,7 +29,7 @@ export const offerings = {
     eyebrow: 'Capabilities · 02',
     title: 'Web Applications | Foundation Stone Algorithms',
     metaDescription:
-      'Dashboards, client portals, and products that make the browser the most useful tab your users open. Request a focused quote for web applications from Foundation Stone Algorithms.',
+      'Dashboards, client portals, and browser products that earn their place as the most useful tab your users open. We build custom web applications with clear interfaces, solid foundations, and room to grow — whether you need analytics views, account workflows, or a full customer-facing product.',
     heading: 'Web Applications',
     paragraphs: [
       'Dashboards, client portals, and products that make the browser the most useful tab your users open.',
@@ -46,7 +46,7 @@ export const offerings = {
     eyebrow: 'Capabilities · 03',
     title: 'Desktop Systems | Foundation Stone Algorithms',
     metaDescription:
-      'Focused operational software for teams whose work happens outside the browser. Request a focused quote for desktop software from Foundation Stone Algorithms.',
+      'Focused operational software for teams whose real work happens outside the browser. We engineer desktop systems for Windows, macOS, and Linux — tools that stay close to the job, respect the environment they run in, and feel purpose-built rather than adapted.',
     heading: 'Desktop Systems',
     paragraphs: [
       'Focused operational software for teams whose work happens outside the browser.',
