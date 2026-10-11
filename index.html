@@ -3,7 +3,11 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" href="/icon.png" />
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="application-name" content="Foundation Stone Algorithms" />
   <meta name="apple-mobile-web-app-title" content="Foundation Stone Algorithms" />
@@ -34,7 +38,12 @@
           "@id": "https://www.foundationstonealgorithms.shop/#organization",
           "name": "Foundation Stone Algorithms",
           "url": "https://www.foundationstonealgorithms.shop/",
-          "logo": "https://www.foundationstonealgorithms.shop/icon.png",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.foundationstonealgorithms.shop/logo-512.png",
+            "width": 512,
+            "height": 512
+          },
           "description": "We build intelligent systems that solve hard problems. An engineering studio for custom mobile apps, web applications, and desktop software — powered by intelligent agents, optimized execution pipelines, and bespoke client customizations for teams that need software shaped around how they actually work."
         },
         {
@@ -42,7 +51,7 @@
           "@id": "https://www.foundationstonealgorithms.shop/#website",
           "url": "https://www.foundationstonealgorithms.shop/",
           "name": "Foundation Stone Algorithms",
-          "alternateName": ["FoundationStoneAlgorithms", "FSA"],
+          "alternateName": ["Foundation Stone", "FoundationStoneAlgorithms", "FSA"],
           "description": "We build intelligent systems that solve hard problems. An engineering studio for custom mobile apps, web applications, and desktop software.",
           "publisher": { "@id": "https://www.foundationstonealgorithms.shop/#organization" },
           "inLanguage": "en"
