@@ -96,6 +96,15 @@ function assertPrimaryNav(html, pathname) {
   }
 }
 
+test('about and pricing meta descriptions stay between 120 and 160 characters', () => {
+  for (const page of [sitePages.about, sitePages.pricing]) {
+    assert.ok(
+      page.metaDescription.length >= 120 && page.metaDescription.length <= 160,
+      `${page.path} metaDescription is ${page.metaDescription.length} characters, expected 120-160`,
+    );
+  }
+});
+
 test('offering canonical URLs are the sitemap locations', () => {
   assert.equal(offerings.mobile.canonicalUrl, 'https://www.foundationstonealgorithms.shop/mobile');
   assert.equal(offerings.web.canonicalUrl, 'https://www.foundationstonealgorithms.shop/web');

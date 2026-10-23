@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useMotionValueEvent, useScroll } from 'motion/react';
 import { Menu, X } from 'lucide-react';
@@ -13,9 +13,10 @@ function isActivePath(pathname: string, href: string) {
   return href === '/' ? pathname === '/' : pathname.startsWith(href);
 }
 
-export default function SiteNav() {
+export default function SiteNav({ quoteHref = '/services' }: { quoteHref?: string }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuToggleRef = useRef<HTMLButtonElement>(null);
   const { scrollY } = useScroll();
   const location = useLocation();
 
@@ -26,6 +27,18 @@ export default function SiteNav() {
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMenuOpen(false);
+        menuToggleRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [menuOpen]);
 
   const condensed = scrolled || menuOpen;
 
@@ -63,10 +76,11 @@ export default function SiteNav() {
               </Link>
             ))}
           </nav>
-          <Link to="/services" className="hidden lg:inline-flex">
+          <Link to={quoteHref} className="hidden lg:inline-flex">
             <Button size="sm">Start a project</Button>
           </Link>
           <button
+            ref={menuToggleRef}
             type="button"
             aria-expanded={menuOpen}
             aria-controls={mobileMenuId}
@@ -102,7 +116,7 @@ export default function SiteNav() {
                 {link.label}
               </Link>
             ))}
-            <Link to="/services" onClick={() => setMenuOpen(false)} className="mt-3">
+            <Link to={quoteHref} onClick={() => setMenuOpen(false)} className="mt-3">
               <Button size="sm" className="w-full">
                 Start a project
               </Button>

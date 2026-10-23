@@ -21,7 +21,7 @@ function OfferingPage({ offering }: { offering: Offering }) {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,hsl(var(--primary)/0.10),transparent_55%)]"
       />
 
-      <SiteNav />
+      <SiteNav quoteHref={offering.quoteHref} />
 
       <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-col px-6 py-16 sm:py-24">
         <Link

@@ -23,7 +23,7 @@ export const sitePages = {
   about: sitePage('/about', {
     title: 'About | Foundation Stone Algorithms',
     metaDescription:
-      'Foundation Stone Algorithms is an intelligent systems studio. We build intelligent systems that solve hard problems — custom software across mobile, web, and desktop, powered by intelligent agents, optimized execution pipelines, and bespoke client customizations for teams that need software shaped around how they actually work.',
+      'Foundation Stone Algorithms is an intelligent systems studio building custom mobile, web, and desktop software powered by intelligent agents.',
     eyebrow: 'Intelligent Systems Studio',
     heading: 'We build intelligent systems that solve hard problems.',
     paragraphs: [
@@ -61,7 +61,7 @@ export const sitePages = {
   pricing: sitePage('/pricing', {
     title: 'Pricing | Foundation Stone Algorithms',
     metaDescription:
-      'Every engagement is a custom quote. Each project is scoped and priced individually — request a focused quote for mobile apps, web applications, dashboards, client portals, business websites, or desktop systems through the guided wizard from Foundation Stone Algorithms.',
+      'Every engagement is a custom quote. Request a focused quote for mobile apps, web applications, dashboards, client portals, websites, or desktop systems.',
     eyebrow: 'Pricing',
     heading: 'Every engagement is a custom quote',
     paragraphs: [
