@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { offerings, type Offering } from '@/seo/offerings.mjs';
 import { usePageMeta } from '@/seo/usePageMeta';
+import SiteNav from '@/components/SiteNav';
 import Monolith from '@/components/hero/Monolith';
 
 function OfferingPage({ offering }: { offering: Offering }) {
@@ -20,18 +21,7 @@ function OfferingPage({ offering }: { offering: Offering }) {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,hsl(var(--primary)/0.10),transparent_55%)]"
       />
 
-      <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
-          <Link to="/" className="flex items-center gap-2.5">
-            <Monolith still className="h-8 w-8" />
-            <span className="sr-only">Foundation Stone Algorithms</span>
-            <span className="text-sm font-semibold tracking-tight">Foundation Stone Algorithms</span>
-          </Link>
-          <Link to={offering.quoteHref}>
-            <Button size="sm">Start a project</Button>
-          </Link>
-        </div>
-      </header>
+      <SiteNav quoteHref={offering.quoteHref} />
 
       <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-col px-6 py-16 sm:py-24">
         <Link
