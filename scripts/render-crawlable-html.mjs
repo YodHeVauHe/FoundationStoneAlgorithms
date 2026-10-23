@@ -1,8 +1,27 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { siteOrigin } from '../src/seo/site.mjs';
+import { primaryNavigation } from '../src/seo/pages.mjs';
 
 const siteName = 'Foundation Stone Algorithms';
+
+function escapeHtml(value) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+}
+
+/** The full primary navigation shared by every prerendered static fallback. */
+function primaryNavHtml() {
+  const links = primaryNavigation
+    .map((link) => `<a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`)
+    .join('\n          ');
+  return `<nav aria-label="Primary">
+          ${links}
+        </nav>`;
+}
 
 const servicesPage = {
   pathname: '/services',
@@ -14,10 +33,7 @@ const servicesPage = {
     <main id="static-seo-fallback">
       <header>
         <p><strong>${siteName}</strong></p>
-        <nav aria-label="Primary">
-          <a href="/">Home</a>
-          <a href="/services">Start a project</a>
-        </nav>
+        ${primaryNavHtml()}
       </header>
       <h1>Start a project request</h1>
       <p>
@@ -32,14 +48,6 @@ const servicesPage = {
     </main>
   `,
 };
-
-function escapeHtml(value) {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;');
-}
 
 function relatedLinksHtml(offering) {
   if (!offering.related?.length) return '';
@@ -58,10 +66,7 @@ function offeringFallbackHtml(offering) {
     <main id="static-seo-fallback">
       <header>
         <p><strong>${escapeHtml(siteName)}</strong></p>
-        <nav aria-label="Primary">
-          <a href="/">Home</a>
-          <a href="${escapeHtml(offering.quoteHref)}">Start a project</a>
-        </nav>
+        ${primaryNavHtml()}
       </header>
       <p>${escapeHtml(offering.eyebrow)}</p>
       <h1>${escapeHtml(offering.heading)}</h1>
@@ -87,8 +92,85 @@ function offeringPageRoute(offering) {
   };
 }
 
-export function crawlableRoutes(offeringPages) {
-  return [servicesPage, ...Object.values(offeringPages).map(offeringPageRoute)];
+function pageHrefForItem(item) {
+  return item.href ?? item.pageHref;
+}
+
+function itemsListHtml(items) {
+  return items
+    .map((item) => {
+      const titleLink = `<a href="${escapeHtml(pageHrefForItem(item))}">${escapeHtml(item.title)}</a>`;
+      const quoteLink = item.quoteHref
+        ? ` <a href="${escapeHtml(item.quoteHref)}">Get a quote</a>`
+        : '';
+      return `<li>${titleLink} — ${escapeHtml(item.description)}${quoteLink}</li>`;
+    })
+    .join('\n        ');
+}
+
+function trustPointsListHtml(trustPoints) {
+  if (!trustPoints?.length) return '';
+  const items = trustPoints
+    .map((point) => `<li>${escapeHtml(point.value)} ${escapeHtml(point.label)}</li>`)
+    .join('\n        ');
+  return `<ul>
+        ${items}
+      </ul>`;
+}
+
+function sitePageFallbackHtml(page) {
+  const paragraphs = page.paragraphs
+    .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
+    .join('\n      ');
+
+  return `
+    <main id="static-seo-fallback">
+      <header>
+        <p><strong>${escapeHtml(siteName)}</strong></p>
+        ${primaryNavHtml()}
+      </header>
+      <p>${escapeHtml(page.eyebrow)}</p>
+      <h1>${escapeHtml(page.heading)}</h1>
+      ${paragraphs}
+      <p><a href="${escapeHtml(page.ctaHref)}">${escapeHtml(page.ctaLabel)}</a></p>
+      <h2>${escapeHtml(page.itemsTitle)}</h2>
+      <ul>
+        ${itemsListHtml(page.items)}
+      </ul>
+      ${trustPointsListHtml(page.trustPoints)}
+    </main>
+  `;
+}
+
+function crumbNameForPath(pathname) {
+  const name = pathname.slice(1);
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+function sitePageRoute(page) {
+  if (!page?.path || !page.canonicalUrl || !page.title || !page.metaDescription) {
+    throw new Error('Site page is missing crawlable page fields');
+  }
+
+  return {
+    pathname: page.path,
+    title: page.title,
+    description: page.metaDescription,
+    canonicalUrl: page.canonicalUrl,
+    fallbackHtml: sitePageFallbackHtml(page),
+    breadcrumbs: [
+      { name: 'Home', item: `${siteOrigin}/` },
+      { name: crumbNameForPath(page.path), item: page.canonicalUrl },
+    ],
+  };
+}
+
+export function crawlableRoutes(offeringPages, sitePages) {
+  return [
+    servicesPage,
+    ...Object.values(sitePages).map(sitePageRoute),
+    ...Object.values(offeringPages).map(offeringPageRoute),
+  ];
 }
 
 function setTitle(html, title) {
@@ -136,6 +218,28 @@ function replaceRootFallback(html, fallbackHtml) {
   return html.replace(rootRe, `<div id="root">${fallbackHtml}\n  </div>`);
 }
 
+function breadcrumbSchemaHtml(breadcrumbs) {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbs.map((crumb, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: crumb.name,
+      item: crumb.item,
+    })),
+  };
+  return `<script type="application/ld+json">${JSON.stringify(schema)}</script>`;
+}
+
+function injectBreadcrumbSchema(html, route) {
+  if (!route.breadcrumbs?.length) return html;
+  if (!html.includes('</head>')) {
+    throw new Error('Missing </head>');
+  }
+  return html.replace('</head>', `${breadcrumbSchemaHtml(route.breadcrumbs)}\n</head>`);
+}
+
 export function renderCrawlableDocument(templateHtml, route) {
   let html = absolutizeAssetUrls(templateHtml);
   html = setTitle(html, route.title);
@@ -147,6 +251,7 @@ export function renderCrawlableDocument(templateHtml, route) {
   html = setMetaContent(html, 'twitter:description', route.description);
   html = setCanonical(html, route.canonicalUrl);
   html = replaceRootFallback(html, route.fallbackHtml);
+  html = injectBreadcrumbSchema(html, route);
   return html;
 }
 

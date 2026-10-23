@@ -1,8 +1,7 @@
-import { useRef, useState, type ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import {
   motion,
-  useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useSpring,
@@ -10,6 +9,8 @@ import {
 } from 'motion/react';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import Services from './pages/Services';
+import About from './pages/About';
+import Pricing from './pages/Pricing';
 import {
   AndroidPage,
   BusinessWebsitePage,
@@ -20,6 +21,7 @@ import {
   MobilePage,
   WebPage,
 } from './pages/Offerings';
+import SiteNav from '@/components/SiteNav';
 import Monolith from '@/components/hero/Monolith';
 import { Button } from '@/components/ui/button';
 
@@ -112,35 +114,6 @@ function Marquee() {
   );
 }
 
-function Nav() {
-  const [scrolled, setScrolled] = useState(false);
-  const { scrollY } = useScroll();
-
-  useMotionValueEvent(scrollY, 'change', (current) => {
-    setScrolled(current > 8);
-  });
-
-  return (
-    <header
-      className={
-        'sticky top-0 z-40 flex items-center justify-between px-6 py-4 transition-colors duration-300 ' +
-        (scrolled ? 'border-b border-border bg-background/85 backdrop-blur-md' : 'border-b border-transparent')
-      }
-    >
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <Monolith still className="h-8 w-8" />
-          <span className="sr-only">Foundation Stone Algorithms</span>
-          <span className="text-sm font-semibold tracking-tight">Foundation Stone Algorithms</span>
-        </div>
-        <Link to="/services">
-          <Button size="sm">Start a project</Button>
-        </Link>
-      </div>
-    </header>
-  );
-}
-
 function Home() {
   const reduceMotion = useReducedMotion();
 
@@ -189,7 +162,7 @@ function Home() {
         />
       </div>
 
-      <Nav />
+      <SiteNav />
 
       <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col">
         {/* Hero — asymmetric: massive type left, the owl sigil on its blue field right */}
@@ -363,6 +336,8 @@ function App() {
         <Route path="/business-website" element={<BusinessWebsitePage />} />
         <Route path="/android" element={<AndroidPage />} />
         <Route path="/ios" element={<IosPage />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/pricing" element={<Pricing />} />
       </Routes>
     </Router>
   );

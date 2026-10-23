@@ -3,7 +3,9 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 import { offerings } from '../src/seo/offerings.mjs';
+import { primaryNavigation, sitePages } from '../src/seo/pages.mjs';
 import {
   crawlableRoutes,
   renderCrawlableDocument,
@@ -64,13 +66,34 @@ function canonicalHref(html) {
 }
 
 function routeFor(pathname) {
-  const route = crawlableRoutes(offerings).find((candidate) => candidate.pathname === pathname);
+  const route = crawlableRoutes(offerings, sitePages).find(
+    (candidate) => candidate.pathname === pathname,
+  );
   assert.ok(route, `missing crawlable route ${pathname}`);
   return route;
 }
 
 function rendered(pathname) {
   return renderCrawlableDocument(homepageHtml, routeFor(pathname));
+}
+
+function jsonLdScript(html, type) {
+  const scripts = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+  const schema = scripts.map((match) => JSON.parse(match[1])).find((entry) => entry['@type'] === type);
+  assert.ok(schema, `missing ${type} JSON-LD`);
+  return schema;
+}
+
+function assertPrimaryNav(html, pathname) {
+  const navMatch = html.match(/<nav aria-label="Primary">([\s\S]*?)<\/nav>/);
+  assert.ok(navMatch, `missing primary nav for ${pathname}`);
+  for (const link of primaryNavigation) {
+    assert.match(
+      navMatch[1],
+      new RegExp(`<a href="${link.href}">${link.label}</a>`),
+      `${pathname} is missing the ${link.label} nav link`,
+    );
+  }
 }
 
 test('offering canonical URLs are the sitemap locations', () => {
@@ -163,6 +186,117 @@ test('specific wizard targets are crawlable pages linked from the parent offerin
   assert.match(mobileHtml, /href="\/ios"/);
 });
 
+test('about crawlable document has the about meta set, content, and breadcrumb JSON-LD', () => {
+  const html = rendered('/about');
+
+  assert.equal(titleOf(html), sitePages.about.title);
+  assert.equal(metaContent(html, 'name', 'description'), sitePages.about.metaDescription);
+  assert.equal(metaContent(html, 'property', 'og:title'), sitePages.about.title);
+  assert.equal(metaContent(html, 'property', 'og:description'), sitePages.about.metaDescription);
+  assert.equal(metaContent(html, 'property', 'og:url'), sitePages.about.canonicalUrl);
+  assert.equal(metaContent(html, 'name', 'twitter:title'), sitePages.about.title);
+  assert.equal(metaContent(html, 'name', 'twitter:description'), sitePages.about.metaDescription);
+  assert.equal(canonicalHref(html), sitePages.about.canonicalUrl);
+  assert.match(html, new RegExp(`<h1>${sitePages.about.heading}</h1>`));
+  assert.match(html, /Foundation Stone Algorithms is an intelligent systems studio/);
+  assert.match(html, /bespoke client customizations for teams that need software shaped around how they actually work/);
+  assert.match(html, /href="\/mobile"/);
+  assert.match(html, /href="\/web"/);
+  assert.match(html, /href="\/desktop"/);
+  assert.match(html, /href="\/services">Start a project request</);
+  assert.match(html, /100% Client Customized/);
+  assert.match(html, /Agentic Autonomy Core/);
+  assert.match(html, /Multi-OS Mobile · Web · PC/);
+  assertPrimaryNav(html, '/about');
+
+  const breadcrumbs = jsonLdScript(html, 'BreadcrumbList');
+  assert.deepEqual(breadcrumbs, {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://www.foundationstonealgorithms.shop/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'About',
+        item: sitePages.about.canonicalUrl,
+      },
+    ],
+  });
+});
+
+test('no offering or services fallback shows the about heading twice', () => {
+  for (const pathname of ['/services', '/mobile', '/web', '/desktop']) {
+    assert.doesNotMatch(rendered(pathname), /<h1>We build intelligent systems that solve hard problems\.<\/h1>/);
+  }
+});
+
+test('pricing crawlable document has the pricing meta set, engagement links, and no currency amounts', () => {
+  const html = rendered('/pricing');
+
+  assert.equal(titleOf(html), sitePages.pricing.title);
+  assert.equal(metaContent(html, 'name', 'description'), sitePages.pricing.metaDescription);
+  assert.equal(canonicalHref(html), sitePages.pricing.canonicalUrl);
+  assert.equal(metaContent(html, 'property', 'og:title'), sitePages.pricing.title);
+  assert.equal(metaContent(html, 'property', 'og:url'), sitePages.pricing.canonicalUrl);
+  assert.match(html, /<h1>Every engagement is a custom quote<\/h1>/);
+  assert.match(html, /Each project is scoped and priced individually/);
+  assert.match(html, /<a href="\/mobile">Mobile apps<\/a>/);
+  assert.match(html, /<a href="\/web">Web applications<\/a>/);
+  assert.match(html, /<a href="\/dashboard">Dashboards<\/a>/);
+  assert.match(html, /<a href="\/client-portal">Client portals<\/a>/);
+  assert.match(html, /<a href="\/business-website">Business websites<\/a>/);
+  assert.match(html, /<a href="\/desktop">Desktop systems<\/a>/);
+  assert.match(html, /<a href="\/services\?type=mobile">Get a quote<\/a>/);
+  assert.match(html, /<a href="\/services\?type=web&amp;focus=dashboard">Get a quote<\/a>/);
+  assert.match(html, /<a href="\/services\?type=system">Get a quote<\/a>/);
+  assert.match(html, /href="\/services">Start a project request</);
+  assertPrimaryNav(html, '/pricing');
+
+  const breadcrumbs = jsonLdScript(html, 'BreadcrumbList');
+  assert.deepEqual(breadcrumbs, {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://www.foundationstonealgorithms.shop/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Pricing',
+        item: sitePages.pricing.canonicalUrl,
+      },
+    ],
+  });
+});
+
+test('no currency character or amount appears on the pricing fallback', () => {
+  const html = rendered('/pricing');
+  assert.doesNotMatch(rendered('/pricing'), /[$€£¥]/);
+  assert.ok(!/\d+\s?(USD|EUR|GBP)/i.test(html));
+});
+
+test('every prerendered fallback carries the full primary navigation', () => {
+  const pathnames = [
+    '/services',
+    ...Object.values(offerings).map((offering) => offering.path),
+    '/about',
+    '/pricing',
+  ];
+  for (const pathname of pathnames) {
+    assertPrimaryNav(rendered(pathname), pathname);
+  }
+});
+
 test('services crawlable document keeps its quote-page title, description, canonical, and og:url', () => {
   const html = rendered('/services');
 
@@ -183,7 +317,7 @@ test('writing crawlable routes leaves the homepage document unchanged', () => {
   const indexPath = path.join(distDir, 'index.html');
   fs.writeFileSync(indexPath, homepageHtml);
 
-  writeCrawlableDocuments(distDir, crawlableRoutes(offerings));
+  writeCrawlableDocuments(distDir, crawlableRoutes(offerings, sitePages));
 
   assert.equal(fs.readFileSync(indexPath, 'utf8'), homepageHtml);
   assert.equal(canonicalHref(fs.readFileSync(path.join(distDir, 'mobile', 'index.html'), 'utf8')), offerings.mobile.canonicalUrl);
@@ -193,6 +327,27 @@ test('writing crawlable routes leaves the homepage document unchanged', () => {
     canonicalHref(fs.readFileSync(path.join(distDir, 'services', 'index.html'), 'utf8')),
     'https://www.foundationstonealgorithms.shop/services',
   );
+  assert.equal(canonicalHref(fs.readFileSync(path.join(distDir, 'about', 'index.html'), 'utf8')), sitePages.about.canonicalUrl);
+  assert.equal(canonicalHref(fs.readFileSync(path.join(distDir, 'pricing', 'index.html'), 'utf8')), sitePages.pricing.canonicalUrl);
+});
+
+test('homepage HTML template and sitemap include the full navigation and the new site pages', () => {
+  const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+  const templateHtml = fs.readFileSync(path.join(repoRoot, 'index.html'), 'utf8');
+  assertPrimaryNav(templateHtml, 'index.html');
+  assert.match(
+    templateHtml,
+    /"@type": "SiteNavigationElement",\s*"name": "About",\s*"url": "https:\/\/www\.foundationstonealgorithms\.shop\/about"/,
+  );
+  assert.match(
+    templateHtml,
+    /"@type": "SiteNavigationElement",\s*"name": "Pricing",\s*"url": "https:\/\/www\.foundationstonealgorithms\.shop\/pricing"/,
+  );
+
+  const sitemapXml = fs.readFileSync(path.join(repoRoot, 'public', 'sitemap.xml'), 'utf8');
+  assert.match(sitemapXml, /<loc>https:\/\/www\.foundationstonealgorithms\.shop\/about<\/loc>/);
+  assert.match(sitemapXml, /<loc>https:\/\/www\.foundationstonealgorithms\.shop\/pricing<\/loc>/);
 });
 
 test('crawlable rendering fails when the homepage template is missing a required meta tag', () => {

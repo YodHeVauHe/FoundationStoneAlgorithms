@@ -13,6 +13,7 @@ import {
 import { FaAndroid, FaApple, FaLinux, FaWindows } from 'react-icons/fa6';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import SiteNav from '@/components/SiteNav';
 import { cn } from '@/lib/utils';
 import { generateQuote } from '@/lib/openrouter';
 
@@ -345,6 +346,8 @@ export default function Services() {
   return (
     <div className="relative min-h-[100svh] w-full overflow-x-clip bg-background text-foreground selection:bg-primary/20 selection:text-foreground">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,hsl(var(--primary)/0.08),transparent_50%)]" />
+
+      <SiteNav />
 
       <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-6xl flex-col px-4 py-6 sm:p-6 lg:p-8">
         <div className="mb-4 flex items-center justify-between">
