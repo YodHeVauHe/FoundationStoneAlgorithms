@@ -216,15 +216,15 @@ test('about crawlable document has the about meta set, content, and breadcrumb J
   assert.equal(metaContent(html, 'name', 'twitter:description'), sitePages.about.metaDescription);
   assert.equal(canonicalHref(html), sitePages.about.canonicalUrl);
   assert.match(html, new RegExp(`<h1>${sitePages.about.heading}</h1>`));
-  assert.match(html, /Foundation Stone Algorithms is an intelligent systems studio/);
-  assert.match(html, /bespoke client customizations for teams that need software shaped around how they actually work/);
+  assert.match(html, /Foundation Stone Algorithms designs and builds software for complex business needs/);
+  assert.match(html, /mobile apps, web applications, and desktop systems shaped around your goals/);
   assert.match(html, /href="\/mobile"/);
   assert.match(html, /href="\/web"/);
   assert.match(html, /href="\/desktop"/);
   assert.match(html, /href="\/services">Start a project request</);
-  assert.match(html, /100% Client Customized/);
-  assert.match(html, /Agentic Autonomy Core/);
-  assert.match(html, /Multi-OS Mobile · Web · PC/);
+  assert.match(html, /Custom Built for your workflows/);
+  assert.match(html, /Intelligent Agent-powered software/);
+  assert.match(html, /Multi-OS Mobile · Web · Desktop/);
   assertPrimaryNav(html, '/about');
 
   const breadcrumbs = jsonLdScript(html, 'BreadcrumbList');

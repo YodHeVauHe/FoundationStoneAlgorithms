@@ -23,12 +23,12 @@ export const sitePages = {
   about: sitePage('/about', {
     title: 'About | Foundation Stone Algorithms',
     metaDescription:
-      'Foundation Stone Algorithms is an intelligent systems studio building custom mobile, web, and desktop software powered by intelligent agents.',
-    eyebrow: 'Intelligent Systems Studio',
-    heading: 'We build intelligent systems that solve hard problems.',
+      'Foundation Stone Algorithms builds custom mobile apps, web applications, and desktop systems around your team’s goals and workflows.',
+    eyebrow: 'About the company',
+    heading: 'Software built around the way you work.',
     paragraphs: [
-      'Foundation Stone Algorithms is an intelligent systems studio.',
-      'We engineer custom software systems across mobile, web, and desktop — powered by intelligent agents, optimized execution pipelines, and bespoke client customizations for teams that need software shaped around how they actually work.',
+      'Foundation Stone Algorithms designs and builds software for complex business needs.',
+      'We create mobile apps, web applications, and desktop systems shaped around your goals, users, and day-to-day workflows.',
     ],
     itemsTitle: 'What we build',
     items: [
@@ -51,9 +51,9 @@ export const sitePages = {
       },
     ],
     trustPoints: [
-      { value: '100%', label: 'Client Customized' },
-      { value: 'Agentic', label: 'Autonomy Core' },
-      { value: 'Multi-OS', label: 'Mobile · Web · PC' },
+      { value: 'Custom', label: 'Built for your workflows' },
+      { value: 'Intelligent', label: 'Agent-powered software' },
+      { value: 'Multi-OS', label: 'Mobile · Web · Desktop' },
     ],
     ctaHref: '/services',
     ctaLabel: 'Start a project request',
