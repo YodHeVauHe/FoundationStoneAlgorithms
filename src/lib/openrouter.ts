@@ -14,56 +14,21 @@ interface QuoteRequest {
 }
 
 export async function generateQuote(request: QuoteRequest): Promise<string> {
-  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
-
-  if (!apiKey) {
-    throw new Error('OpenRouter API key not configured');
-  }
-
-  const systemPrompt = `You are a software development pricing expert. Provide a concise price estimate in the local currency of ${request.country.label}. If a specific currency was requested (${request.country.currency} ${request.country.symbol}), use that.
-
-Format:
-- Price: [Local Currency Symbol][Amount]
-- Simple breakdown in 1-2 lines
-- Keep it brief and professional`;
-
-  const userContent = `Project Type: ${request.service}
-Scope: ${request.scope}
-Details: ${request.details}
-Country: ${request.country.label}
-
-Provide a concise quote in the local currency of ${request.country.label}.`;
-
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const response = await fetch('/api/generate-quote', {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': window.location.origin,
-      'X-Title': 'Foundation Stone - Quote Generator',
-    },
-    body: JSON.stringify({
-      model: 'qwen/qwen-2.5-7b-instruct',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userContent },
-      ],
-      temperature: 0.3,
-      max_tokens: 100,
-    }),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
   });
 
+  const result = await response.json().catch(() => ({}));
+
   if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.error?.message || `API error: ${response.status}`);
+    throw new Error(result.error || `Quote request failed: ${response.status}`);
   }
 
-  const data = await response.json();
-  const content = data.choices?.[0]?.message?.content;
-
-  if (!content) {
+  if (typeof result.quote !== 'string' || !result.quote.trim()) {
     throw new Error('No response from AI');
   }
 
-  return content;
+  return result.quote.trim();
 }

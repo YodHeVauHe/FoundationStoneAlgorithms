@@ -23,7 +23,7 @@ npm install
 npm run dev
 ```
 
-Set `VITE_OPENROUTER_API_KEY` in `.env` to enable AI-assisted quote generation. Use `npm run build` to create a production build.
+Set `OPENROUTER_API_KEY` in `.env` to enable AI-assisted quote generation. Keep this server-side key unprefixed by `VITE_`. Use `npm run build` to create a production build.
 
 ## License
 

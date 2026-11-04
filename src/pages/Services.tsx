@@ -294,13 +294,6 @@ export default function Services() {
     setQuoteError(null);
 
     try {
-      const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
-      if (!apiKey) {
-        setQuoteError('Quote service is not configured. Add VITE_OPENROUTER_API_KEY to your .env file.');
-        setIsLoadingQuote(false);
-        return;
-      }
-
       const serviceText = selectedProductCard?.title || '';
       const scopeText = selectionSummary.slice(1).join(', ') || 'Not specified';
 
