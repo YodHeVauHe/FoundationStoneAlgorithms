@@ -210,12 +210,48 @@ function absolutizeAssetUrls(html) {
   return html.replace(/(\s(?:src|href)=["'])\.\/assets\//g, '$1/assets/');
 }
 
+function removeHomepageOnlyWebsiteSchema(html) {
+  return html.replace(
+    /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g,
+    (script, json) => {
+      try {
+        return JSON.parse(json)['@type'] === 'WebSite' ? '' : script;
+      } catch {
+        return script;
+      }
+    },
+  );
+}
+
+function divElementById(html, id) {
+  const openingIndex = html.indexOf(`<div id="${id}"`);
+  if (openingIndex === -1) return '';
+
+  const divTags = /<\/?div\b[^>]*>/gi;
+  divTags.lastIndex = openingIndex;
+  let depth = 0;
+  let match;
+
+  while ((match = divTags.exec(html))) {
+    depth += match[0].startsWith('</') ? -1 : 1;
+    if (depth === 0) return html.slice(openingIndex, divTags.lastIndex);
+  }
+
+  return '';
+}
+
 function replaceRootFallback(html, fallbackHtml) {
-  const rootRe = /<div id="root">[\s\S]*?<\/div>/;
+  // The boot loader ships in the homepage template; carry it over so real users
+  // on prerendered routes get the loading state too. Crawlers without JS never
+  // see it — the boot stylesheet only shows it when the `js` class is set.
+  const loaderHtml = divElementById(html, 'app-loader');
+  // Vite moves module scripts into <head> in production. Match the root through
+  // the end of <body> there, or through the body module script in source HTML.
+  const rootRe = /<div id="root">[\s\S]*<\/div>(?=\s*(?:<script type="module"|<\/body>))/;
   if (!rootRe.test(html)) {
     throw new Error('Missing <div id="root">');
   }
-  return html.replace(rootRe, `<div id="root">${fallbackHtml}\n  </div>`);
+  return html.replace(rootRe, `<div id="root">${fallbackHtml}${loaderHtml}\n  </div>`);
 }
 
 function breadcrumbSchemaHtml(breadcrumbs) {
@@ -241,7 +277,7 @@ function injectBreadcrumbSchema(html, route) {
 }
 
 export function renderCrawlableDocument(templateHtml, route) {
-  let html = absolutizeAssetUrls(templateHtml);
+  let html = removeHomepageOnlyWebsiteSchema(absolutizeAssetUrls(templateHtml));
   html = setTitle(html, route.title);
   html = setMetaContent(html, 'description', route.description);
   html = setMetaContent(html, 'og:title', route.title, 'property');

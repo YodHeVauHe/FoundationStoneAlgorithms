@@ -16,6 +16,106 @@
   <meta name="author" content="Foundation Stone Algorithms" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://www.foundationstonealgorithms.shop/" />
+  <style>
+    /* Boot state: dark theme from first paint, branded loader while the bundle loads.
+       The SEO fallback stays visible only where JS never runs (crawlers). */
+    html {
+      background-color: hsl(224 32% 7%);
+      color: hsl(0 0% 98%);
+      color-scheme: dark;
+    }
+    #app-loader {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 32px;
+      background:
+        radial-gradient(ellipse at 50% 38%, hsl(221 85% 58% / 0.14), transparent 42%),
+        hsl(224 32% 7%);
+      font-family: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .loader-content {
+      display: flex;
+      width: min(100%, 360px);
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      border: 1px solid hsl(0 0% 100% / 0.09);
+      background: hsl(0 0% 100% / 0.025);
+      padding: 36px 28px 30px;
+      text-align: center;
+    }
+    html.js #app-loader {
+      display: flex;
+    }
+    html.js #static-seo-fallback {
+      display: none;
+    }
+    .loader-mark {
+      display: grid;
+      width: 72px;
+      height: 72px;
+      place-items: center;
+      border: 1px solid hsl(221 85% 58% / 0.48);
+      border-radius: 50%;
+      box-shadow: 0 0 42px hsl(221 85% 58% / 0.18);
+    }
+    .loader-mark img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+    .loader-wordmark {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: hsl(0 0% 92%);
+    }
+    .loader-message {
+      margin: -10px 0 2px;
+      font-family: Geist, ui-sans-serif, system-ui, sans-serif;
+      font-size: 14px;
+      color: hsl(0 0% 63%);
+    }
+    .loader-bar {
+      position: relative;
+      width: 176px;
+      height: 2px;
+      overflow: hidden;
+      background-color: hsl(0 0% 16%);
+    }
+    .loader-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 40%;
+      background-color: hsl(221 85% 58%);
+      animation: loader-slide 1.1s ease-in-out infinite;
+    }
+    @keyframes loader-slide {
+      0% {
+        transform: translateX(-100%);
+      }
+      100% {
+        transform: translateX(350%);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .loader-bar::after {
+        animation: none;
+      }
+    }
+  </style>
+  <script>document.documentElement.classList.add('js');</script>
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Foundation Stone Algorithms" />
   <meta property="og:title" content="Foundation Stone Algorithms | Intelligent Systems Studio" />
@@ -32,6 +132,18 @@
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://www.foundationstonealgorithms.shop/#website",
+      "url": "https://www.foundationstonealgorithms.shop/",
+      "name": "Foundation Stone Algorithms",
+      "alternateName": "Foundation Stone",
+      "publisher": { "@id": "https://www.foundationstonealgorithms.shop/#organization" },
+      "inLanguage": "en"
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
       "@graph": [
         {
           "@type": "Organization",
@@ -45,16 +157,6 @@
             "height": 512
           },
           "description": "We build intelligent systems that solve hard problems. An engineering studio for custom mobile apps, web applications, and desktop software — powered by intelligent agents, optimized execution pipelines, and bespoke client customizations for teams that need software shaped around how they actually work."
-        },
-        {
-          "@type": "WebSite",
-          "@id": "https://www.foundationstonealgorithms.shop/#website",
-          "url": "https://www.foundationstonealgorithms.shop/",
-          "name": "Foundation Stone Algorithms",
-          "alternateName": ["Foundation Stone", "FoundationStoneAlgorithms", "FSA"],
-          "description": "We build intelligent systems that solve hard problems. An engineering studio for custom mobile apps, web applications, and desktop software.",
-          "publisher": { "@id": "https://www.foundationstonealgorithms.shop/#organization" },
-          "inLanguage": "en"
         },
         {
           "@type": "SiteNavigationElement",
@@ -109,6 +211,14 @@
 
 <body>
   <div id="root">
+    <div id="app-loader" role="status" aria-label="Loading Foundation Stone Algorithms">
+      <div class="loader-content">
+        <span class="loader-mark"><img src="/icon.png" alt="" /></span>
+        <p class="loader-wordmark">Foundation Stone Algorithms</p>
+        <p class="loader-message">Preparing your experience</p>
+        <span class="loader-bar" aria-hidden="true"></span>
+      </div>
+    </div>
     <main id="static-seo-fallback">
       <header>
         <p><strong>Foundation Stone Algorithms</strong> — Intelligent Systems Studio</p>

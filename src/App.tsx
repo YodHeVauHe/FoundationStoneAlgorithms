@@ -296,7 +296,7 @@ function Home() {
           <span className="text-goggles">{' }'}</span>
         </motion.p>
 
-        <footer className="flex flex-col items-center gap-4 px-6 py-10 text-center text-xs text-muted-foreground">
+        <footer data-nosnippet className="flex flex-col items-center gap-4 px-6 py-10 text-center text-xs text-muted-foreground">
           <nav aria-label="Services" className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             {capabilities.map((capability) => (
               <Link

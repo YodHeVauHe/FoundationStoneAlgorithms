@@ -31,9 +31,18 @@ const homepageHtml = `<!DOCTYPE html>
   <meta name="twitter:description"
     content="${HOMEPAGE_DESCRIPTION}" />
   <title>${HOMEPAGE_TITLE}</title>
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
   <div id="root">
+    <div id="app-loader" role="status" aria-label="Loading Foundation Stone Algorithms">
+      <div class="loader-content">
+        <span class="loader-mark"><img src="/icon.png" alt="" /></span>
+        <p class="loader-wordmark">Foundation Stone Algorithms</p>
+        <p class="loader-message">Preparing your experience</p>
+        <span class="loader-bar" aria-hidden="true"></span>
+      </div>
+    </div>
     <main id="static-seo-fallback">
       <h1>We build intelligent systems that solve hard problems.</h1>
     </main>
@@ -319,6 +328,18 @@ test('services crawlable document keeps its quote-page title, description, canon
   assert.match(html, /<h1>Start a project request<\/h1>/);
   assert.match(html, /Guided quote wizard for mobile apps, web applications, and desktop software/);
   assert.doesNotMatch(html, /We build intelligent systems that solve hard problems/);
+});
+
+test('rendered crawlable documents keep the boot script and the app loader', () => {
+  for (const pathname of ['/services', '/mobile', '/about', '/pricing']) {
+    const html = rendered(pathname);
+    assert.match(html, /document\.documentElement\.classList\.add\('js'\)/);
+    assert.match(
+      html,
+      /<main id="static-seo-fallback">[\s\S]*<\/main>\s*<div id="app-loader" role="status"[^>]*>[\s\S]*?<span class="loader-bar" aria-hidden="true"><\/span>\s*<\/div>\s*<\/div>\s*<\/div>\s*<script type="module"/,
+      `${pathname} lost the app loader or put it before the crawlable fallback`,
+    );
+  }
 });
 
 test('writing crawlable routes leaves the homepage document unchanged', () => {

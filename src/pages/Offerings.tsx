@@ -77,7 +77,7 @@ function OfferingPage({ offering }: { offering: Offering }) {
         </div>
       </main>
 
-      <footer className="relative z-10 flex flex-col items-center gap-3 px-6 py-10 text-center text-xs text-muted-foreground">
+      <footer data-nosnippet className="relative z-10 flex flex-col items-center gap-3 px-6 py-10 text-center text-xs text-muted-foreground">
         <Monolith still className="h-8 w-8" />
         {new Date().getFullYear()} Foundation Stone Algorithms. All rights reserved.
       </footer>
