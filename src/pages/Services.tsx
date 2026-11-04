@@ -870,6 +870,9 @@ export default function Services() {
           </aside>
         </div>
       </div>
+      <footer data-nosnippet className="relative z-10 px-4 pb-6 text-center text-xs text-muted-foreground">
+        © {new Date().getFullYear()} FoundationStone Algorithms Limited · Company Registration No. 80042240898972
+      </footer>
     </div>
   );
 }

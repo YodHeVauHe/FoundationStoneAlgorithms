@@ -315,7 +315,7 @@ function Home() {
             </Link>
           </nav>
           <Monolith still className="h-8 w-8" />
-          {new Date().getFullYear()} Foundation Stone Algorithms. All rights reserved.
+          © {new Date().getFullYear()} FoundationStone Algorithms Limited · Company Registration No. 80042240898972
         </footer>
       </div>
     </div>

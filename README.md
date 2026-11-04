@@ -24,3 +24,7 @@ npm run dev
 ```
 
 Set `VITE_OPENROUTER_API_KEY` in `.env` to enable AI-assisted quote generation. Use `npm run build` to create a production build.
+
+## License
+
+Copyright © 2026 FoundationStone Algorithms Limited. All rights reserved. This is proprietary company software, not open source. See [LICENSE](./LICENSE).
