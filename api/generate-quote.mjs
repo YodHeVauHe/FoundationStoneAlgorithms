@@ -16,6 +16,19 @@ function readText(value, maxLength) {
   return text && text.length <= maxLength ? text : null;
 }
 
+function readQuoteContent(content) {
+  if (typeof content === 'string') return content.trim() || null;
+  if (!Array.isArray(content)) return null;
+
+  const text = content
+    .filter((part) => part?.type === 'text' && typeof part.text === 'string')
+    .map((part) => part.text.trim())
+    .filter(Boolean)
+    .join('\n');
+
+  return text || null;
+}
+
 function validateRequest(body) {
   const country = body?.country;
   const details = typeof body?.details === 'string' ? body.details.trim() : null;
@@ -102,7 +115,9 @@ export async function handleQuoteRequest(request) {
           { role: 'user', content: userContent },
         ],
         temperature: 0.3,
-        max_tokens: 120,
+        // Free auto-routed models vary; allow enough room for a short quote
+        // and its breakdown, including models with a reasoning phase.
+        max_tokens: 400,
       }),
       signal: AbortSignal.timeout(20_000),
     });
@@ -118,12 +133,18 @@ export async function handleQuoteRequest(request) {
     });
   }
 
-  const quote = result?.choices?.[0]?.message?.content;
-  if (typeof quote !== 'string' || !quote.trim()) {
+  const choice = result?.choices?.[0];
+  const quote = readQuoteContent(choice?.message?.content);
+  if (!quote) {
+    console.warn('OpenRouter returned no quote text.', {
+      model: result?.model,
+      finishReason: choice?.finish_reason,
+      messageFields: Object.keys(choice?.message ?? {}),
+    });
     return jsonResponse(502, { error: 'OpenRouter returned an empty quote.' });
   }
 
-  return jsonResponse(200, { quote: quote.trim() });
+  return jsonResponse(200, { quote });
 }
 
 export default {
