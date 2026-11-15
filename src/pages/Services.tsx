@@ -1,13 +1,17 @@
 import { useMemo, useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import {
+  AlertCircle,
   ArrowLeft,
   ArrowRight,
   Check,
+  Copy,
   Globe,
   Laptop,
+  Loader2,
   MessageSquareText,
   PackageCheck,
+  RotateCcw,
   Smartphone,
 } from 'lucide-react';
 import { FaAndroid, FaApple, FaLinux, FaWindows } from 'react-icons/fa6';
@@ -15,6 +19,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
+import { GitHubIcon, XIcon } from '@/components/icons/SocialIcons';
+import { siteContactLinks } from '@/seo/site.mjs';
 import { cn } from '@/lib/utils';
 import { generateQuote } from '@/lib/openrouter';
 
@@ -105,6 +111,32 @@ const systemOptions = [
   { id: 'macos' as const, label: 'macOS', icon: FaApple },
   { id: 'windows' as const, label: 'Windows', icon: FaWindows },
 ];
+
+function formatQuoteErrorMessage(raw: string): string {
+  const lower = raw.toLowerCase();
+  if (lower.includes('location not detected') || lower.includes('location')) {
+    return 'Your regional location could not be detected. Please check your browser location permissions or refresh the page to calculate local pricing.';
+  }
+  if (lower.includes('rate limit') || lower.includes('429')) {
+    return 'The automated estimation engine is currently receiving high demand. Please wait a moment and try again.';
+  }
+  if (lower.includes('not configured') || lower.includes('503')) {
+    return 'The automated estimation service is temporarily undergoing configuration or maintenance. You can copy your project scope below and reach out directly.';
+  }
+  if (
+    lower.includes('timeout') ||
+    lower.includes('reach') ||
+    lower.includes('502') ||
+    lower.includes('fetch') ||
+    lower.includes('network')
+  ) {
+    return 'The quote service timed out or could not be reached. Please check your network connection and retry.';
+  }
+  if (lower.includes('empty quote') || lower.includes('no response')) {
+    return 'The AI engine returned an empty estimate for this specification. Please add more details in the project description and retry.';
+  }
+  return raw.replace(/^failed to generate quote:\s*(error:\s*)?/i, '');
+}
 
 export default function Services() {
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
@@ -238,6 +270,24 @@ export default function Services() {
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
   const [quoteResult, setQuoteResult] = useState<string | null>(null);
   const [quoteError, setQuoteError] = useState<string | null>(null);
+  const [copiedSummary, setCopiedSummary] = useState(false);
+
+  const copyProjectSummary = async () => {
+    const summaryLines = [
+      'Foundation Stone Algorithms — Project Scope Request',
+      `Service: ${selectedProductCard?.title || 'Not specified'}`,
+      `Scope: ${selectionSummary.slice(1).join(', ') || 'Not specified'}`,
+      `Region: ${selectedCountry ? `${selectedCountry.label} (${selectedCountry.currency} ${selectedCountry.symbol})` : 'Not specified'}`,
+      `Requirements:\n${description.trim() || 'No additional requirements provided.'}`,
+    ];
+    try {
+      await navigator.clipboard.writeText(summaryLines.join('\n'));
+      setCopiedSummary(true);
+      setTimeout(() => setCopiedSummary(false), 2500);
+    } catch (e) {
+      console.warn('Clipboard write failed:', e);
+    }
+  };
 
   const selectedProductCard = productCards.find((card) => card.id === selectedProduct) ?? null;
 
@@ -319,6 +369,8 @@ export default function Services() {
     setMobilePlatform(null);
     setWebFocus(null);
     setSystemPlatforms([]);
+    setQuoteResult(null);
+    setQuoteError(null);
   };
 
   const toggleSystemPlatform = (platform: SystemPlatform) => {
@@ -747,6 +799,76 @@ export default function Services() {
                       </div>
                     </div>
                   </div>
+
+                  {quoteError && (
+                    <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-4 space-y-3">
+                      <div className="flex items-start gap-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-destructive/20 bg-destructive/10 text-destructive">
+                          <AlertCircle className="h-4 w-4" />
+                        </div>
+                        <div className="space-y-1">
+                          <h3 className="text-sm font-semibold text-foreground">
+                            Quote generation could not complete
+                          </h3>
+                          <p className="text-xs leading-relaxed text-muted-foreground">
+                            {formatQuoteErrorMessage(quoteError)}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-destructive/15">
+                        <Button
+                          size="sm"
+                          onClick={getQuote}
+                          disabled={isLoadingQuote || !selectedCountry}
+                          className="h-8 gap-1.5 text-xs"
+                        >
+                          <RotateCcw className={cn('h-3 w-3', isLoadingQuote && 'animate-spin')} />
+                          Retry Quote
+                        </Button>
+
+                        <button
+                          type="button"
+                          onClick={copyProjectSummary}
+                          className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-border bg-card/60 px-3 text-xs font-medium text-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                        >
+                          {copiedSummary ? (
+                            <>
+                              <Check className="h-3 w-3 text-green-500" />
+                              <span className="text-green-500">Summary Copied!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-3 w-3" />
+                              <span>Copy Request Details</span>
+                            </>
+                          )}
+                        </button>
+
+                        <div className="ml-auto flex items-center gap-2 text-[11px] text-muted-foreground">
+                          <span className="hidden sm:inline font-mono text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                            Or reach us directly:
+                          </span>
+                          {siteContactLinks.map((link) => {
+                            const isGithub = link.label.toLowerCase() === 'github';
+                            return (
+                              <a
+                                key={link.href}
+                                href={link.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={link.ariaLabel}
+                                className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+                              >
+                                {isGithub ? <GitHubIcon className="h-3 w-3" /> : <XIcon className="h-3 w-3" />}
+                                <span>{link.label}</span>
+                              </a>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </motion.div>
@@ -775,13 +897,30 @@ export default function Services() {
                         <Check className="h-4 w-4" />
                         Quoted
                       </div>
+                    ) : quoteError ? (
+                      <Button onClick={getQuote} disabled={!selectedCountry || isLoadingQuote}>
+                        {isLoadingQuote ? (
+                          <>
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            <span>Analyzing scope…</span>
+                          </>
+                        ) : (
+                          <>
+                            <RotateCcw className="h-3.5 w-3.5" />
+                            <span>Retry Quote</span>
+                          </>
+                        )}
+                      </Button>
                     ) : (
                       <Button onClick={getQuote} disabled={!selectedCountry || isLoadingQuote}>
                         {isLoadingQuote ? (
-                          <span className="animate-pulse">Analyzing scope…</span>
+                          <>
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            <span>Analyzing scope…</span>
+                          </>
                         ) : (
                           <>
-                            Get Quote
+                            <span>Get Quote</span>
                             <ArrowRight className="h-3.5 w-3.5" />
                           </>
                         )}
@@ -846,8 +985,32 @@ export default function Services() {
             )}
 
             {quoteError && (
-              <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-xs leading-relaxed text-destructive">
-                {quoteError}
+              <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-3 space-y-2">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-destructive">
+                  <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                  <span>Estimation notice</span>
+                </div>
+                <p className="text-xs leading-relaxed text-destructive/90">
+                  {formatQuoteErrorMessage(quoteError)}
+                </p>
+                <div className="flex items-center justify-between pt-1">
+                  <button
+                    type="button"
+                    onClick={getQuote}
+                    disabled={isLoadingQuote || !selectedCountry}
+                    className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-destructive underline hover:text-foreground transition-colors disabled:opacity-50"
+                  >
+                    <RotateCcw className="h-2.5 w-2.5" />
+                    Retry
+                  </button>
+                  <button
+                    type="button"
+                    onClick={copyProjectSummary}
+                    className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {copiedSummary ? 'Copied' : 'Copy details'}
+                  </button>
+                </div>
               </div>
             )}
 
