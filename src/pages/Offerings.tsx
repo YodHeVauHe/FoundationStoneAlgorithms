@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { offerings, type Offering } from '@/seo/offerings.mjs';
 import { usePageMeta } from '@/seo/usePageMeta';
 import SiteNav from '@/components/SiteNav';
+import SiteFooter from '@/components/SiteFooter';
 import Monolith from '@/components/hero/Monolith';
 
 function OfferingPage({ offering }: { offering: Offering }) {
@@ -77,10 +78,7 @@ function OfferingPage({ offering }: { offering: Offering }) {
         </div>
       </main>
 
-      <footer data-nosnippet className="relative z-10 flex flex-col items-center gap-3 px-6 py-10 text-center text-xs text-muted-foreground">
-        <Monolith still className="h-8 w-8" />
-        © {new Date().getFullYear()} FoundationStone Algorithms Limited · Company Registration No. 80042240898972
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

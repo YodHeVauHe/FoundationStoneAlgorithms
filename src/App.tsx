@@ -22,6 +22,7 @@ import {
   WebPage,
 } from './pages/Offerings';
 import SiteNav from '@/components/SiteNav';
+import SiteFooter from '@/components/SiteFooter';
 import Monolith from '@/components/hero/Monolith';
 import { Button } from '@/components/ui/button';
 
@@ -296,7 +297,7 @@ function Home() {
           <span className="text-goggles">{' }'}</span>
         </motion.p>
 
-        <footer data-nosnippet className="flex flex-col items-center gap-4 px-6 py-10 text-center text-xs text-muted-foreground">
+        <SiteFooter className="gap-4">
           <nav aria-label="Services" className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             {capabilities.map((capability) => (
               <Link
@@ -314,9 +315,7 @@ function Home() {
               Start a project
             </Link>
           </nav>
-          <Monolith still className="h-8 w-8" />
-          © {new Date().getFullYear()} FoundationStone Algorithms Limited · Company Registration No. 80042240898972
-        </footer>
+        </SiteFooter>
       </div>
     </div>
   );

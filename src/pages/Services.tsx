@@ -14,6 +14,7 @@ import { FaAndroid, FaApple, FaLinux, FaWindows } from 'react-icons/fa6';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import SiteNav from '@/components/SiteNav';
+import SiteFooter from '@/components/SiteFooter';
 import { cn } from '@/lib/utils';
 import { generateQuote } from '@/lib/openrouter';
 
@@ -863,9 +864,7 @@ export default function Services() {
           </aside>
         </div>
       </div>
-      <footer data-nosnippet className="relative z-10 px-4 pb-6 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} FoundationStone Algorithms Limited · Company Registration No. 80042240898972
-      </footer>
+      <SiteFooter showMark={false} className="px-4 pb-6 pt-0" />
     </div>
   );
 }
