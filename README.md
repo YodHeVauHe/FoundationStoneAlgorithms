@@ -40,26 +40,6 @@ Tell us what your business needs and receive a project quote through our structu
 
 </div>
 
-## This repository
-
-This repository contains the company website and the project request experience that powers it.
-
-### Run locally
-
-```bash
-npm install
-npm run dev
-```
-
-To enable AI-assisted quote generation, set `OPENROUTER_API_KEY` in `.env`. Keep this server-side key unprefixed by `VITE_`.
-
-```bash
-npm run build   # production build to dist/
-npm run lint    # ESLint
-```
-
-The site is deployed on Vercel; configuration lives in `vercel.json`.
-
 ## License
 
 Copyright © 2026 FoundationStone Algorithms Limited. All rights reserved.
