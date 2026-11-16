@@ -36,7 +36,7 @@ Tell us what your business needs and receive a project quote through our structu
 
 <div align="center">
 
-**[Start a project →](https://www.foundationstonealgorithms.shop/services)**
+[![Start a Project](https://img.shields.io/badge/🚀_Start_a_Project-2ea043?style=for-the-badge)](https://www.foundationstonealgorithms.shop/services)
 
 </div>
 
@@ -50,6 +50,9 @@ This is proprietary company software, not open source. See [LICENSE](./LICENSE).
 
 <div align="center">
 
-[Website](https://www.foundationstonealgorithms.shop) · [GitHub](https://github.com/FoundationStoneAlgorithms) · [X](https://x.com/fsalgorithm)
+[![Website](https://img.shields.io/badge/Website-foundationstonealgorithms.shop-2b3aed?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.foundationstonealgorithms.shop)
+[![GitHub](https://img.shields.io/badge/GitHub-FoundationStoneAlgorithms-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/FoundationStoneAlgorithms)
+[![X](https://img.shields.io/badge/%40fsalgorithm-181717?style=for-the-badge&logo=x&logoColor=white)](https://x.com/fsalgorithm)
+[![Start a Project](https://img.shields.io/badge/🚀_Start_a_Project-2ea043?style=for-the-badge)](https://www.foundationstonealgorithms.shop/services)
 
 </div>
