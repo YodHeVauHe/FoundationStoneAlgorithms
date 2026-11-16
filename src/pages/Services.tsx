@@ -858,10 +858,10 @@ export default function Services() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label={link.ariaLabel}
-                                className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+                                title={link.label}
+                                className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
                               >
-                                {isGithub ? <GitHubIcon className="h-3 w-3" /> : <XIcon className="h-3 w-3" />}
-                                <span>{link.label}</span>
+                                {isGithub ? <GitHubIcon className="h-3.5 w-3.5" /> : <XIcon className="h-3.5 w-3.5" />}
                               </a>
                             );
                           })}

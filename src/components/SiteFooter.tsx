@@ -58,15 +58,15 @@ export default function SiteFooter({
               target="_blank"
               rel="noopener noreferrer"
               aria-label={link.ariaLabel}
-              className="group inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-200 hover:text-foreground"
+              title={link.label}
+              className="group inline-flex items-center text-muted-foreground transition-colors duration-200 hover:text-foreground"
             >
               {Icon ? (
                 <Icon
                   aria-hidden="true"
-                  className="h-3.5 w-3.5 shrink-0 text-muted-foreground/80 transition-all duration-200 group-hover:scale-110 group-hover:text-foreground"
+                  className="h-4 w-4 shrink-0 text-muted-foreground/80 transition-all duration-200 group-hover:scale-110 group-hover:text-foreground"
                 />
               ) : null}
-              <span>{link.label}</span>
             </a>
           );
         })}
