@@ -6,11 +6,7 @@
 
 **Intelligent Systems Studio — custom software for complex business needs.**
 
-[![Website](https://img.shields.io/badge/Website-foundationstonealgorithms.shop-2b3aed?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.foundationstonealgorithms.shop)
-[![GitHub](https://img.shields.io/badge/GitHub-FoundationStoneAlgorithms-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/FoundationStoneAlgorithms)
-[![X](https://img.shields.io/badge/%40fsalgorithm-181717?style=for-the-badge&logo=x&logoColor=white)](https://x.com/fsalgorithm)
-[![Start a Project](https://img.shields.io/badge/🚀_Start_a_Project-2ea043?style=for-the-badge)](https://www.foundationstonealgorithms.shop/services)
-[![License](https://img.shields.io/badge/License-Proprietary-blue?style=for-the-badge)](./LICENSE)
+<a href="https://www.foundationstonealgorithms.shop"><img src="https://img.shields.io/badge/Website-foundationstonealgorithms.shop-2b3aed?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Website" height="42"></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/FoundationStoneAlgorithms"><img src="https://img.shields.io/badge/GitHub-FoundationStoneAlgorithms-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" height="42"></a>&nbsp;&nbsp;&nbsp;<a href="https://x.com/fsalgorithm"><img src="https://img.shields.io/badge/%40fsalgorithm-181717?style=for-the-badge&logo=x&logoColor=white" alt="X" height="42"></a>&nbsp;&nbsp;&nbsp;<a href="https://www.foundationstonealgorithms.shop/services"><img src="https://img.shields.io/badge/🚀_Start_a_Project-2ea043?style=for-the-badge" alt="Start a Project" height="42"></a>&nbsp;&nbsp;&nbsp;<a href="./LICENSE"><img src="https://img.shields.io/badge/License-Proprietary-blue?style=for-the-badge" alt="License" height="42"></a>
 
 </div>
 
@@ -36,7 +32,7 @@ Tell us what your business needs and receive a project quote through our structu
 
 <div align="center">
 
-[![Start a Project](https://img.shields.io/badge/🚀_Start_a_Project-2ea043?style=for-the-badge)](https://www.foundationstonealgorithms.shop/services)
+<a href="https://www.foundationstonealgorithms.shop/services"><img src="https://img.shields.io/badge/🚀_Start_a_Project-2ea043?style=for-the-badge" alt="Start a Project" height="42"></a>
 
 </div>
 
@@ -48,11 +44,10 @@ This is proprietary company software, not open source. See [LICENSE](./LICENSE).
 
 ---
 
+<br>
+
 <div align="center">
 
-[![Website](https://img.shields.io/badge/Website-foundationstonealgorithms.shop-2b3aed?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.foundationstonealgorithms.shop)
-[![GitHub](https://img.shields.io/badge/GitHub-FoundationStoneAlgorithms-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/FoundationStoneAlgorithms)
-[![X](https://img.shields.io/badge/%40fsalgorithm-181717?style=for-the-badge&logo=x&logoColor=white)](https://x.com/fsalgorithm)
-[![Start a Project](https://img.shields.io/badge/🚀_Start_a_Project-2ea043?style=for-the-badge)](https://www.foundationstonealgorithms.shop/services)
+<a href="https://www.foundationstonealgorithms.shop"><img src="https://img.shields.io/badge/Website-foundationstonealgorithms.shop-2b3aed?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Website" height="42"></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/FoundationStoneAlgorithms"><img src="https://img.shields.io/badge/GitHub-FoundationStoneAlgorithms-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" height="42"></a>&nbsp;&nbsp;&nbsp;<a href="https://x.com/fsalgorithm"><img src="https://img.shields.io/badge/%40fsalgorithm-181717?style=for-the-badge&logo=x&logoColor=white" alt="X" height="42"></a>&nbsp;&nbsp;&nbsp;<a href="https://www.foundationstonealgorithms.shop/services"><img src="https://img.shields.io/badge/🚀_Start_a_Project-2ea043?style=for-the-badge" alt="Start a Project" height="42"></a>
 
 </div>
