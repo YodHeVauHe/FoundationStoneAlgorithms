@@ -44,7 +44,7 @@ export default function SiteFooter({
 
       <nav
         aria-label="Contact"
-        className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2"
+        className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3"
       >
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70">
           Contact
@@ -59,12 +59,12 @@ export default function SiteFooter({
               rel="noopener noreferrer"
               aria-label={link.ariaLabel}
               title={link.label}
-              className="group inline-flex items-center text-muted-foreground transition-colors duration-200 hover:text-foreground"
+              className="group inline-flex items-center justify-center rounded-md p-1.5 text-muted-foreground transition-colors duration-200 hover:text-foreground"
             >
               {Icon ? (
                 <Icon
                   aria-hidden="true"
-                  className="h-4 w-4 shrink-0 text-muted-foreground/80 transition-all duration-200 group-hover:scale-110 group-hover:text-foreground"
+                  className="h-6 w-6 shrink-0 text-muted-foreground/80 transition-all duration-200 group-hover:scale-110 group-hover:text-foreground"
                 />
               ) : null}
             </a>
